@@ -1,0 +1,15 @@
+{
+  "name": "@azkar/backend",
+  "version": "1.0.0",
+  "description": "Spring Boot backend for Azkar app",
+  "scripts": {
+    "dev": "mvn spring-boot:run",
+    "build": "mvn clean package",
+    "test": "mvn test",
+    "lint": "echo 'No linting configured for Java backend'",
+    "format": "echo 'No formatting configured for Java backend'"
+  },
+  "keywords": ["azkar", "spring-boot", "java"],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "azkar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Arabic Adhkar & Duas App (Offline-first)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:all": "turbo run dev",
+    "build:all": "turbo run build",
+    "test:all": "turbo run test",
+    "lint:all": "turbo run lint",
+    "format:all": "turbo run format"
+  },
+  "keywords": ["adhkar", "arabic", "islamic", "offline"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "turbo": "^2.5.6"
+  }
+}

@@ -1,0 +1,77 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output/
+
+# Production
+dist/
+build/
+out/
+target/
+*.jar
+
+# Turbo
+.turbo/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# React Native
+.expo/
+*.jsbundle
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+data/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS
+Thumbs.db
+
+# Java
+.gradle/
+.mvn/
+.settings/
+.classpath
+.project
+*.iml
+*.iws
+*.ipr
+
+# Mobile
+ios/Pods/
+android/.gradle/
+android/app/build/
+android/build/
+*.apk
+*.aab
+*.ipa
