@@ -27,9 +27,15 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
     <div className="space-y-6">
       {/* Welcome section */}
       <div className="text-center mb-8">
-        <div className="w-20 h-20 bg-gradient-to-r from-emerald-400 to-teal-500 dark:from-amber-400 dark:to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-          <span className="text-3xl">🤲</span>
+        <div className="flex justify-center mx-auto mb-4">
+  <img
+  src="/bismilah2.png"
+  alt="بسم الله الرحمن الرحيم"
+            className="object-contain dark:brightness-0 dark:invert"
+            style={{ width: '30rem', height: '20rem' }}
+/>
         </div>
+
         <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100 mb-2 font-arabic">
           أهلاً وسهلاً
         </h2>
