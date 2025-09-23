@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { CategorySlug } from '@azkar/shared';
+import { useTheme } from '../contexts/ThemeContext';
 
 type Page = 'home' | 'azkar' | 'settings';
 
@@ -9,14 +10,17 @@ interface NavigationProps {
   selectedCategory: CategorySlug | null;
   onBack: () => void;
   onSettingsPress: () => void;
+  onThemeToggle?: () => void;
 }
 
 const Navigation: React.FC<NavigationProps> = ({
   currentPage,
   selectedCategory,
   onBack,
-  onSettingsPress
+  onSettingsPress,
+  onThemeToggle
 }) => {
+  const { theme, toggleTheme, colors } = useTheme();
   const getTitle = () => {
     if (currentPage === 'home') return 'أذكار وأدعية';
     if (currentPage === 'azkar' && selectedCategory === 'morning') return 'أذكار الصباح';
@@ -26,17 +30,32 @@ const Navigation: React.FC<NavigationProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
       <View style={styles.header}>
-        {currentPage !== 'home' && (
-          <TouchableOpacity onPress={onBack} style={styles.button}>
-            <Text style={styles.backText}>←</Text>
+        {/* Left button - Back or Theme Toggle */}
+        {currentPage !== 'home' ? (
+          <TouchableOpacity
+            onPress={onBack}
+            style={[styles.button, { backgroundColor: theme === 'dark' ? '#374151' : '#f0fdf4' }]}
+          >
+            <Text style={[styles.backText, { color: colors.primary }]}>←</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={toggleTheme}
+            style={[styles.button, { backgroundColor: theme === 'dark' ? '#374151' : '#f0fdf4' }]}
+          >
+            <Text style={styles.themeIcon}>{theme === 'dark' ? '🌙' : '☀️'}</Text>
           </TouchableOpacity>
         )}
 
-        <Text style={styles.title}>{getTitle()}</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{getTitle()}</Text>
 
-        <TouchableOpacity onPress={onSettingsPress} style={styles.button}>
+        {/* Right button - Settings */}
+        <TouchableOpacity
+          onPress={onSettingsPress}
+          style={[styles.button, { backgroundColor: theme === 'dark' ? '#374151' : '#f0fdf4' }]}
+        >
           <Text style={styles.settingsText}>⚙️</Text>
         </TouchableOpacity>
       </View>
@@ -46,9 +65,7 @@ const Navigation: React.FC<NavigationProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
   },
   header: {
     flexDirection: 'row',
@@ -61,7 +78,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#065f46',
     textAlign: 'center',
     flex: 1,
   },
@@ -69,13 +85,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f0fdf4',
     alignItems: 'center',
     justifyContent: 'center',
   },
   backText: {
     fontSize: 20,
-    color: '#059669',
+  },
+  themeIcon: {
+    fontSize: 16,
   },
   settingsText: {
     fontSize: 18,

@@ -9,10 +9,13 @@ import HomePage from './src/components/HomePage';
 import AzkarList from './src/components/AzkarList';
 import Settings from './src/components/Settings';
 import Navigation from './src/components/Navigation';
+import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
+import { FontProvider } from './src/contexts/FontContext';
 
 type Page = 'home' | 'azkar' | 'settings';
 
-export default function App() {
+function AppContent() {
+  const { colors, theme } = useTheme();
   const [isReady, setIsReady] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [selectedCategory, setSelectedCategory] = useState<CategorySlug | null>(null);
@@ -71,22 +74,28 @@ export default function App() {
 
   if (!isReady) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#059669" />
-        <Text style={styles.loadingText}>جاري تحميل الأذكار...</Text>
-        <StatusBar style="light" backgroundColor="#059669" />
+      <View style={[styles.loadingContainer, { backgroundColor: colors.primary }]}>
+        <ActivityIndicator size="large" color={colors.surface} />
+        <Text style={[styles.loadingText, { color: colors.surface }]}>جاري تحميل الأذكار...</Text>
+        <StatusBar
+          style={theme === 'dark' ? 'light' : 'dark'}
+          backgroundColor={colors.primary}
+        />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" backgroundColor="#059669" />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar
+        style={theme === 'dark' ? 'light' : 'dark'}
+        backgroundColor={colors.primary}
+      />
 
       {/* Offline indicator */}
       {!isOnline && (
-        <View style={styles.offlineBar}>
-          <Text style={styles.offlineText}>
+        <View style={[styles.offlineBar, { backgroundColor: colors.warning }]}>
+          <Text style={[styles.offlineText, { color: 'white' }]}>
             أنت في وضع عدم الاتصال - يتم عرض البيانات المحفوظة محلياً
           </Text>
         </View>
@@ -112,31 +121,36 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <FontProvider>
+        <AppContent />
+      </FontProvider>
+    </ThemeProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0fdf4',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#059669',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: 'white',
     fontWeight: '400',
     textAlign: 'center',
   },
   offlineBar: {
-    backgroundColor: '#f59e0b',
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
   offlineText: {
-    color: 'white',
     fontSize: 12,
     textAlign: 'center',
     fontWeight: '400',

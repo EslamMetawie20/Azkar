@@ -1,38 +1,54 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Platform } from 'react-native';
 import { CategorySlug } from '@azkar/shared';
+import { useTheme } from '../contexts/ThemeContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface HomePageProps {
   onCategorySelect: (category: CategorySlug) => void;
 }
 
 const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
+  const { theme, colors } = useTheme();
+
   const categories = [
     {
       slug: 'morning' as CategorySlug,
       title: 'أذكار الصباح',
       description: 'أذكار وأدعية الصباح المستجابة',
       emoji: '🌅',
-      color: '#f59e0b'
+      gradientColors: theme === 'light'
+        ? ['#fbbf24', '#f97316'] // amber-400 to orange-500
+        : ['#fbbf24', '#f97316']
     },
     {
       slug: 'evening' as CategorySlug,
       title: 'أذكار المساء',
       description: 'أذكار وأدعية المساء المباركة',
       emoji: '🌙',
-      color: '#7c3aed'
+      gradientColors: theme === 'light'
+        ? ['#818cf8', '#a855f7'] // indigo-400 to purple-500
+        : ['#818cf8', '#a855f7']
     }
   ];
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Welcome section */}
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      contentContainerStyle={styles.content}
+    >
+      {/* Welcome section with Bismillah */}
       <View style={styles.welcomeSection}>
-        <View style={styles.iconContainer}>
-          <Text style={styles.mainIcon}>🤲</Text>
-        </View>
-        <Text style={styles.welcomeTitle}>أهلاً وسهلاً</Text>
-        <Text style={styles.welcomeSubtitle}>
+        <Image
+          source={require('../../assets/bismilah3.png')}
+          style={[
+            styles.bismillahImage,
+            theme === 'dark' && styles.bismillahImageDark
+          ]}
+          resizeMode="contain"
+        />
+        <Text style={[styles.welcomeTitle, { color: colors.text }]}>أهلاً وسهلاً</Text>
+        <Text style={[styles.welcomeSubtitle, { color: colors.textSecondary }]}>
           اختر نوع الأذكار التي تريد قراءتها
         </Text>
       </View>
@@ -42,27 +58,43 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
         {categories.map((category) => (
           <TouchableOpacity
             key={category.slug}
-            style={styles.categoryCard}
+            style={[styles.categoryCard, { backgroundColor: colors.surface }]}
             onPress={() => onCategorySelect(category.slug)}
             activeOpacity={0.8}
           >
             <View style={styles.cardContent}>
-              <View style={[styles.categoryIcon, { backgroundColor: category.color }]}>
-                <Text style={styles.categoryEmoji}>{category.emoji}</Text>
-              </View>
+              {Platform.OS === 'web' ? (
+                <View
+                  style={[
+                    styles.categoryIcon,
+                    {
+                      background: `linear-gradient(135deg, ${category.gradientColors[0]}, ${category.gradientColors[1]})`
+                    }
+                  ]}
+                >
+                  <Text style={styles.categoryEmoji}>{category.emoji}</Text>
+                </View>
+              ) : (
+                <LinearGradient
+                  colors={category.gradientColors}
+                  style={styles.categoryIcon}
+                >
+                  <Text style={styles.categoryEmoji}>{category.emoji}</Text>
+                </LinearGradient>
+              )}
               <View style={styles.categoryInfo}>
-                <Text style={styles.categoryTitle}>{category.title}</Text>
-                <Text style={styles.categoryDescription}>{category.description}</Text>
+                <Text style={[styles.categoryTitle, { color: colors.text }]}>{category.title}</Text>
+                <Text style={[styles.categoryDescription, { color: colors.textSecondary }]}>{category.description}</Text>
               </View>
-              <Text style={styles.arrow}>→</Text>
+              <Text style={[styles.arrow, { color: colors.primary }]}>→</Text>
             </View>
           </TouchableOpacity>
         ))}
       </View>
 
       {/* Features section */}
-      <View style={styles.featuresSection}>
-        <Text style={styles.featuresTitle}>مميزات التطبيق</Text>
+      <View style={[styles.featuresSection, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.featuresTitle, { color: colors.text }]}>مميزات التطبيق</Text>
         <View style={styles.featuresList}>
           {[
             { icon: '📱', text: 'يعمل بدون اتصال بالإنترنت' },
@@ -72,7 +104,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
           ].map((feature, index) => (
             <View key={index} style={styles.featureItem}>
               <Text style={styles.featureIcon}>{feature.icon}</Text>
-              <Text style={styles.featureText}>{feature.text}</Text>
+              <Text style={[styles.featureText, { color: colors.textSecondary }]}>{feature.text}</Text>
             </View>
           ))}
         </View>
@@ -92,6 +124,14 @@ const styles = StyleSheet.create({
   welcomeSection: {
     alignItems: 'center',
     marginBottom: 30,
+  },
+  bismillahImage: {
+    width: 250,
+    height: 120,
+    marginBottom: 16,
+  },
+  bismillahImageDark: {
+    tintColor: '#ffffff',
   },
   iconContainer: {
     width: 80,
