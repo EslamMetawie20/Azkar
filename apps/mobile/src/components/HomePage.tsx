@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   bismillahImage: {
-    width: 250,
-    height: 120,
+    width: 320,
+    height: 150,
     marginBottom: 16,
   },
   bismillahImageDark: {

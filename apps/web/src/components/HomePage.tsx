@@ -29,7 +29,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
       <div className="text-center mb-8">
         <div className="flex justify-center mx-auto mb-4">
   <img
-  src="/bismilah2.png"
+  src="/bismilah3.png"
   alt="بسم الله الرحمن الرحيم"
             className="object-contain dark:brightness-0 dark:invert"
             style={{ width: '30rem', height: '20rem' }}

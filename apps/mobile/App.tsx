@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ActivityIndicator, Alert, I18nManager } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, Alert, I18nManager, TouchableOpacity } from 'react-native';
 import * as Font from 'expo-font';
 import { CategorySlug } from '@azkar/shared';
 import { mobileApiService } from './src/services/api';
@@ -20,6 +20,7 @@ function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [selectedCategory, setSelectedCategory] = useState<CategorySlug | null>(null);
   const [isOnline, setIsOnline] = useState(false);
+  const [showOfflineMessage, setShowOfflineMessage] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -43,6 +44,15 @@ function AppContent() {
         // Check online status
         const online = await mobileApiService.isOnline();
         setIsOnline(online);
+
+        // Show offline message if not online
+        if (!online) {
+          setShowOfflineMessage(true);
+          // Auto-hide after 3 seconds
+          setTimeout(() => {
+            setShowOfflineMessage(false);
+          }, 3000);
+        }
 
         setIsReady(true);
       } catch (error) {
@@ -93,11 +103,19 @@ function AppContent() {
       />
 
       {/* Offline indicator */}
-      {!isOnline && (
+      {!isOnline && showOfflineMessage && (
         <View style={[styles.offlineBar, { backgroundColor: colors.warning }]}>
-          <Text style={[styles.offlineText, { color: 'white' }]}>
-            أنت في وضع عدم الاتصال - يتم عرض البيانات المحفوظة محلياً
-          </Text>
+          <View style={styles.offlineContent}>
+            <Text style={[styles.offlineText, { color: 'white' }]}>
+              أنت في وضع عدم الاتصال - يتم عرض البيانات المحفوظة محلياً
+            </Text>
+            <TouchableOpacity
+              onPress={() => setShowOfflineMessage(false)}
+              style={styles.skipButton}
+            >
+              <Text style={styles.skipButtonText}>تخطي</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
 
@@ -150,10 +168,28 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
+  offlineContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   offlineText: {
     fontSize: 12,
-    textAlign: 'center',
     fontWeight: '400',
+    flex: 1,
+    textAlign: 'right',
+    marginRight: 8,
+  },
+  skipButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  skipButtonText: {
+    color: 'white',
+    fontSize: 11,
+    fontWeight: '500',
   },
   content: {
     flex: 1,
