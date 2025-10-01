@@ -84,7 +84,10 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
       {/* Bismillah for all surahs except At-Tawbah (9) */}
       {surah.number !== 9 && surah.number !== 1 && (
         <div className="text-center py-6">
-          <p className="text-2xl font-bold text-gray-800 dark:text-slate-100 font-arabic">
+          <p
+            className="font-bold text-gray-800 dark:text-slate-100 font-arabic"
+            style={{ fontSize: `${fontSize * 1.5}px` }}
+          >
             بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
           </p>
         </div>
@@ -97,7 +100,10 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
             key={ayah.number}
             className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow"
           >
-            <p className="text-lg leading-relaxed text-gray-800 dark:text-slate-100 font-arabic text-right mb-2">
+            <p
+              className="leading-relaxed text-gray-800 dark:text-slate-100 font-arabic text-right mb-2"
+              style={{ fontSize: `${fontSize}px` }}
+            >
               {ayah.text}
               <span className="text-emerald-600 dark:text-amber-400 font-bold mx-2">
                 ﴿{ayah.numberInSurah}﴾

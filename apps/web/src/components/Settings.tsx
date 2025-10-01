@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { storage } from '../utils/storage';
 import { useTheme } from '../contexts/ThemeContext';
+import { useFontSize } from '../contexts/FontContext';
 import Switch from '@mui/material/Switch';
 import { styled } from '@mui/material/styles';
 
@@ -63,20 +64,15 @@ const ThemeSwitch = styled(Switch)(({ theme }) => ({
 
 const Settings: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
-  const [fontSize, setFontSize] = useState(16);
-  const [tempFontSize, setTempFontSize] = useState(16);
+  const { fontSize, setFontSize } = useFontSize();
+  const [tempFontSize, setTempFontSize] = useState(fontSize);
   const [progressData, setProgressData] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load settings from localStorage
-    const savedFontSize = localStorage.getItem('azkar-font-size');
+    setTempFontSize(fontSize);
+  }, [fontSize]);
 
-    if (savedFontSize) {
-      const size = parseInt(savedFontSize);
-      setFontSize(size);
-      setTempFontSize(size);
-    }
-
+  useEffect(() => {
     // Load progress data
     loadProgressData();
   }, []);
@@ -96,14 +92,6 @@ const Settings: React.FC = () => {
 
   const applyFontSize = () => {
     setFontSize(tempFontSize);
-    localStorage.setItem('azkar-font-size', tempFontSize.toString());
-    document.documentElement.style.setProperty('--arabic-font-size', `${tempFontSize}px`);
-
-    // Apply to all arabic text elements
-    const arabicElements = document.querySelectorAll('.arabic-text, .font-arabic');
-    arabicElements.forEach((element) => {
-      (element as HTMLElement).style.fontSize = `${tempFontSize}px`;
-    });
   };
 
 
@@ -115,6 +103,19 @@ const Settings: React.FC = () => {
         alert('تم حذف جميع البيانات بنجاح');
       } catch (error) {
         console.error('Failed to clear progress:', error);
+        alert('حدث خطأ أثناء حذف البيانات');
+      }
+    }
+  };
+
+  const clearAllCache = async () => {
+    if (confirm('هل تريد حذف جميع البيانات المحفوظة وإعادة تحميلها؟ سيتم إعادة تحميل الصفحة.')) {
+      try {
+        await storage.clearAllData();
+        alert('تم حذف البيانات المحفوظة. سيتم إعادة تحميل الصفحة.');
+        window.location.reload();
+      } catch (error) {
+        console.error('Failed to clear cache:', error);
         alert('حدث خطأ أثناء حذف البيانات');
       }
     }
@@ -189,6 +190,22 @@ const Settings: React.FC = () => {
         </div>
       </div>
 
+
+      {/* Data Management */}
+      <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl p-6 shadow-lg">
+        <h3 className="text-lg font-bold text-gray-800 dark:text-slate-100 mb-4 font-arabic">إدارة البيانات</h3>
+        <div className="space-y-3">
+          <button
+            onClick={clearAllCache}
+            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-arabic font-bold"
+          >
+            تحديث البيانات المحفوظة
+          </button>
+          <p className="text-sm text-gray-500 dark:text-slate-400 font-arabic text-center">
+            استخدم هذا الزر إذا كانت بعض الأذكار لا تظهر بشكل صحيح
+          </p>
+        </div>
+      </div>
 
       {/* App info */}
       <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl p-6 shadow-lg">

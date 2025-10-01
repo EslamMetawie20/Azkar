@@ -101,6 +101,13 @@ class OfflineStorage {
     await this.db!.clear('progress');
   }
 
+  async clearAllData() {
+    if (!this.db) await this.init();
+    await this.db!.clear('categories');
+    await this.db!.clear('azkar');
+    await this.db!.clear('progress');
+  }
+
   async isDataAvailable(): Promise<boolean> {
     if (!this.db) await this.init();
     const categories = await this.getCategories();
