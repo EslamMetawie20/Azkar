@@ -9,16 +9,19 @@ import HomePage from './src/components/HomePage';
 import AzkarList from './src/components/AzkarList';
 import Settings from './src/components/Settings';
 import Navigation from './src/components/Navigation';
+import QuranList from './src/components/QuranList';
+import SurahViewer from './src/components/SurahViewer';
 import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
 import { FontProvider } from './src/contexts/FontContext';
 
-type Page = 'home' | 'azkar' | 'settings';
+type Page = 'home' | 'azkar' | 'settings' | 'quran' | 'surah';
 
 function AppContent() {
   const { colors, theme } = useTheme();
   const [isReady, setIsReady] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [selectedCategory, setSelectedCategory] = useState<CategorySlug | null>(null);
+  const [selectedSurah, setSelectedSurah] = useState<number | null>(null);
   const [isOnline, setIsOnline] = useState(false);
   const [showOfflineMessage, setShowOfflineMessage] = useState(false);
 
@@ -73,6 +76,21 @@ function AppContent() {
   const handleBackToHome = () => {
     setCurrentPage('home');
     setSelectedCategory(null);
+    setSelectedSurah(null);
+  };
+
+  const handleQuranSelect = () => {
+    setCurrentPage('quran');
+  };
+
+  const handleSurahSelect = (surahNumber: number) => {
+    setSelectedSurah(surahNumber);
+    setCurrentPage('surah');
+  };
+
+  const handleBackFromSurah = () => {
+    setCurrentPage('quran');
+    setSelectedSurah(null);
   };
 
   const handlePageChange = (page: Page) => {
@@ -123,15 +141,26 @@ function AppContent() {
       <Navigation
         currentPage={currentPage}
         selectedCategory={selectedCategory}
-        onBack={handleBackToHome}
+        onBack={currentPage === 'surah' ? handleBackFromSurah : handleBackToHome}
         onSettingsPress={() => handlePageChange(currentPage === 'settings' ? 'home' : 'settings')}
       />
 
       {/* Main content */}
       <View style={styles.content}>
-        {currentPage === 'home' && <HomePage onCategorySelect={handleCategorySelect} />}
+        {currentPage === 'home' && (
+          <HomePage
+            onCategorySelect={handleCategorySelect}
+            onQuranSelect={handleQuranSelect}
+          />
+        )}
         {currentPage === 'azkar' && selectedCategory && (
           <AzkarList category={selectedCategory} />
+        )}
+        {currentPage === 'quran' && (
+          <QuranList onSurahSelect={handleSurahSelect} />
+        )}
+        {currentPage === 'surah' && selectedSurah && (
+          <SurahViewer surahNumber={selectedSurah} />
         )}
         {currentPage === 'settings' && <Settings />}
       </View>

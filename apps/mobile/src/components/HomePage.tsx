@@ -6,9 +6,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 interface HomePageProps {
   onCategorySelect: (category: CategorySlug) => void;
+  onQuranSelect?: () => void;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
+const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) => {
   const { theme, colors } = useTheme();
 
   const categories = [
@@ -31,6 +32,16 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
         : ['#818cf8', '#a855f7']
     }
   ];
+
+  const quranButton = {
+    slug: 'quran',
+    title: 'القرآن الكريم',
+    description: 'جميع سور القرآن الكريم',
+    emoji: '📖',
+    gradientColors: theme === 'light'
+      ? ['#10b981', '#059669'] // emerald-500 to emerald-600
+      : ['#10b981', '#059669']
+  };
 
   return (
     <ScrollView
@@ -90,6 +101,40 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
             </View>
           </TouchableOpacity>
         ))}
+
+        {/* Quran button */}
+        <TouchableOpacity
+          style={[styles.categoryCard, { backgroundColor: colors.surface }]}
+          onPress={onQuranSelect}
+          activeOpacity={0.8}
+        >
+          <View style={styles.cardContent}>
+            {Platform.OS === 'web' ? (
+              <View
+                style={[
+                  styles.categoryIcon,
+                  {
+                    background: `linear-gradient(135deg, ${quranButton.gradientColors[0]}, ${quranButton.gradientColors[1]})`
+                  }
+                ]}
+              >
+                <Text style={styles.categoryEmoji}>{quranButton.emoji}</Text>
+              </View>
+            ) : (
+              <LinearGradient
+                colors={quranButton.gradientColors}
+                style={styles.categoryIcon}
+              >
+                <Text style={styles.categoryEmoji}>{quranButton.emoji}</Text>
+              </LinearGradient>
+            )}
+            <View style={styles.categoryInfo}>
+              <Text style={[styles.categoryTitle, { color: colors.text }]}>{quranButton.title}</Text>
+              <Text style={[styles.categoryDescription, { color: colors.textSecondary }]}>{quranButton.description}</Text>
+            </View>
+            <Text style={[styles.arrow, { color: colors.primary }]}>→</Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
       {/* Features section */}

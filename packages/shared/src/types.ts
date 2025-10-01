@@ -19,3 +19,29 @@ export interface HealthResponse {
 
 export type CategorySlug = 'morning' | 'evening';
 
+export interface Surah {
+  number: number;
+  name: string;
+  englishName: string;
+  englishNameTranslation: string;
+  numberOfAyahs: number;
+  revelationType: string;
+}
+
+export interface Ayah {
+  number: number;
+  text: string;
+  surah: number;
+  numberInSurah: number;
+  juz: number;
+  manzil: number;
+  page: number;
+  ruku: number;
+  hizbQuarter: number;
+  sajda: boolean | { id: number; recommended: boolean; obligatory: boolean };
+}
+
+export interface SurahWithAyahs extends Surah {
+  ayahs: Ayah[];
+}
+

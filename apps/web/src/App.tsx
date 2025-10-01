@@ -3,15 +3,19 @@ import type { CategorySlug } from '@azkar/shared';
 import HomePage from './components/HomePage';
 import AzkarList from './components/AzkarList';
 import Settings from './components/Settings';
+import QuranList from './components/QuranList';
+import SurahViewer from './components/SurahViewer';
 import { apiService } from './services/api';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { FontProvider } from './contexts/FontContext';
 
-type Page = 'home' | 'azkar' | 'settings';
+type Page = 'home' | 'azkar' | 'settings' | 'quran' | 'surah';
 
 function AppContent() {
   const { isDark, toggleTheme } = useTheme();
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [selectedCategory, setSelectedCategory] = useState<CategorySlug | null>(null);
+  const [selectedSurah, setSelectedSurah] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
@@ -50,11 +54,26 @@ function AppContent() {
   const handleBackToHome = () => {
     setCurrentPage('home');
     setSelectedCategory(null);
+    setSelectedSurah(null);
+  };
+
+  const handleQuranSelect = () => {
+    setCurrentPage('quran');
+  };
+
+  const handleSurahSelect = (surahNumber: number) => {
+    setSelectedSurah(surahNumber);
+    setCurrentPage('surah');
+  };
+
+  const handleBackFromSurah = () => {
+    setCurrentPage('quran');
+    setSelectedSurah(null);
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 dark:border-amber-400 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-slate-300 font-arabic">جاري تحميل الأذكار...</p>
@@ -64,7 +83,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800">
       {/* Status bar */}
       {!isOnline && (
         <div className="bg-amber-500 dark:bg-amber-600 text-white text-center py-2 px-4 text-sm">
@@ -77,7 +96,7 @@ function AppContent() {
         <div className="w-full px-4 py-4 flex items-center justify-between">
           {currentPage !== 'home' && (
             <button
-              onClick={handleBackToHome}
+              onClick={currentPage === 'surah' ? handleBackFromSurah : handleBackToHome}
               className="p-2 text-emerald-600 dark:text-amber-400 hover:bg-emerald-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,6 +109,8 @@ function AppContent() {
             {currentPage === 'home' && 'أذكار وأدعية'}
             {currentPage === 'azkar' && selectedCategory === 'morning' && 'أذكار الصباح'}
             {currentPage === 'azkar' && selectedCategory === 'evening' && 'أذكار المساء'}
+            {currentPage === 'quran' && 'القرآن الكريم'}
+            {currentPage === 'surah' && 'سورة'}
             {currentPage === 'settings' && 'الإعدادات'}
           </h1>
 
@@ -132,9 +153,20 @@ function AppContent() {
 
       {/* Main content */}
       <main className="w-full max-w-4xl mx-auto px-4 py-6">
-        {currentPage === 'home' && <HomePage onCategorySelect={handleCategorySelect} />}
+        {currentPage === 'home' && (
+          <HomePage
+            onCategorySelect={handleCategorySelect}
+            onQuranSelect={handleQuranSelect}
+          />
+        )}
         {currentPage === 'azkar' && selectedCategory && (
           <AzkarList category={selectedCategory} />
+        )}
+        {currentPage === 'quran' && (
+          <QuranList onSurahSelect={handleSurahSelect} />
+        )}
+        {currentPage === 'surah' && selectedSurah && (
+          <SurahViewer surahNumber={selectedSurah} onBack={handleBackFromSurah} />
         )}
         {currentPage === 'settings' && <Settings />}
       </main>
@@ -145,7 +177,9 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <FontProvider>
+        <AppContent />
+      </FontProvider>
     </ThemeProvider>
   );
 }

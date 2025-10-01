@@ -3,9 +3,10 @@ import type { CategorySlug } from '@azkar/shared';
 
 interface HomePageProps {
   onCategorySelect: (category: CategorySlug) => void;
+  onQuranSelect?: () => void;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
+const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) => {
   const categories = [
     {
       slug: 'morning' as CategorySlug,
@@ -72,6 +73,31 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect }) => {
             </div>
           </button>
         ))}
+
+        {/* Quran button */}
+        <button
+          onClick={onQuranSelect}
+          className="w-full p-6 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:border-emerald-200 dark:hover:border-amber-400"
+        >
+          <div className="flex items-center space-x-4 space-x-reverse">
+            <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center text-2xl shadow-lg">
+              📖
+            </div>
+            <div className="flex-1 text-right">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-slate-100 mb-1 font-arabic">
+                القرآن الكريم
+              </h3>
+              <p className="text-gray-600 dark:text-slate-400 text-sm font-arabic">
+                جميع سور القرآن الكريم
+              </p>
+            </div>
+            <div className="text-emerald-500 dark:text-amber-400">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </button>
       </div>
 
       {/* Features section */}
