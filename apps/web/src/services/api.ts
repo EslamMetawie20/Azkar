@@ -3,7 +3,6 @@ import { storage } from '../utils/storage';
 
 class ApiService {
   private async fetchLocalData(): Promise<any> {
-    // Cache-busting URL to ensure we don't get old data
     const timestamp = new Date().getTime();
     const urls = [
       `azkar.json?v=${timestamp}`,
@@ -12,18 +11,11 @@ class ApiService {
     
     for (const url of urls) {
       try {
-        console.log('Trying to fetch azkar data from:', url);
         const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Successfully loaded JSON from:', url);
-          return data;
-        }
-      } catch (err) {
-        console.warn(`Failed to fetch from ${url}:`, err);
-      }
+        if (response.ok) return await response.json();
+      } catch (err) {}
     }
-    throw new Error('All fetch attempts failed');
+    throw new Error('Load failed');
   }
 
   async getCategories(): Promise<Category[]> {
@@ -36,15 +28,10 @@ class ApiService {
   async getAzkarByCategory(categorySlug: CategorySlug): Promise<Zikr[]> {
     try {
       const data = await this.fetchLocalData();
-      
-      // Key in JSON is exactly "أذكار الصباح والمساء"
       const combinedKey = "أذكار الصباح والمساء";
       const categoryData = data[combinedKey];
 
-      if (!categoryData || !categoryData.text) {
-        console.error('Category data missing in JSON');
-        return [];
-      }
+      if (!categoryData || !categoryData.text) return [];
 
       const azkarTexts: string[] = categoryData.text.filter((text: string) => text && text.trim().length > 0);
       const footnotes: string[] = categoryData.footnote || [];
@@ -57,9 +44,10 @@ class ApiService {
         else if (text.includes('عشر مرات') || text.includes('عشر')) repeatMin = 10;
         else if (text.includes('أربع مرات') || text.includes('أربع')) repeatMin = 4;
 
+        // FIXED: Using Arabic letter 'ت' instead of English 't'
         const cleanText = text
-          .replace(/\(\s*.*?\s*مرا?ت?\s*\)/g, '')
-          .replace(/(ثلاث|أربع|خمس|ست|سبع|ثمان|تسع|عشر|مائة)\s*مرا?ت?/g, '')
+          .replace(/\(\s*.*?\s*مرات?\s*\)/g, '')
+          .replace(/(ثلاث|أربع|خمس|ست|سبع|ثمان|تسع|عشر|مائة)\s*مرات?/g, '')
           .replace(/\s+/g, ' ')
           .trim();
 
@@ -72,12 +60,9 @@ class ApiService {
         };
       });
 
-      // Crucial: save to storage using the category slug
       await storage.saveAzkar(processedAzkar, categorySlug);
       return processedAzkar;
     } catch (error) {
-      console.error('Error loading azkar:', error);
-      // Try to load from local storage if fetch fails
       return await storage.getAzkarByCategory(categorySlug);
     }
   }

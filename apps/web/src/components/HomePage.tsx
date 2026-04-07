@@ -27,7 +27,6 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
 
   return (
     <div className="space-y-6">
-      {/* Welcome section with high-quality image display */}
       <div className="text-center mb-8">
         <div className="flex justify-center mx-auto mb-4">
           <img
@@ -35,10 +34,9 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
             alt="بسم الله الرحمن الرحيم"
             className="object-contain dark:brightness-0 dark:invert"
             style={{ 
-              width: '100%', 
-              maxWidth: '600px', 
-              height: 'auto',
-              imageRendering: 'auto', // Ensures smooth scaling
+              width: 'auto', // Back to auto for clarity
+              maxWidth: '100%', 
+              maxHeight: '15rem', // Limited height to prevent blur
               display: 'block'
             }}
           />
@@ -81,7 +79,6 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
           </button>
         ))}
 
-        {/* Quran button */}
         <button
           onClick={onQuranSelect}
           className="w-full p-6 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:border-emerald-200 dark:hover:border-amber-400"
@@ -107,7 +104,6 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
         </button>
       </div>
 
-      {/* Features section */}
       <div className="mt-12 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl p-6 shadow-lg">
         <h3 className="text-lg font-bold text-gray-800 dark:text-slate-100 mb-4 text-center font-arabic">
           مميزات التطبيق
@@ -116,7 +112,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
           {[
             { icon: '📱', text: 'يعمل بدون اتصال بالإنترنت' },
             { icon: '🕒', text: 'عداد تلقائي لكل ذكر' },
-            { icon: '🎯', text: 'تتبع التقدم اليومي' },
+            { icon: '🎯', text: 'تتبع التقدم اليومי' },
             { icon: '📖', text: 'نصوص أصيلة من حصن المسلم' }
           ].map((feature, index) => (
             <div key={index} className="flex items-center space-x-3 space-x-reverse">
