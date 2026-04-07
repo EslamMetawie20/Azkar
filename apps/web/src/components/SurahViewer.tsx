@@ -24,7 +24,6 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
       setSurah(data);
     } catch (error) {
       console.error(`Failed to load surah ${surahNumber}:`, error);
-      alert('فشل في تحميل السورة');
     } finally {
       setLoading(false);
     }
@@ -32,97 +31,85 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600 dark:border-amber-400 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-slate-400 font-arabic">جاري تحميل السورة...</p>
-        </div>
+      <div className="flex flex-col justify-center items-center h-64 space-y-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-spiritual-gold"></div>
+        <p className="text-spiritual-dark dark:text-spiritual-sand font-arabic">جاري تحميل السورة...</p>
       </div>
     );
   }
 
-  if (!surah) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-600 dark:text-slate-400 font-arabic">لم يتم العثور على السورة</p>
-      </div>
-    );
-  }
+  if (!surah) return null;
 
   return (
-    <div className="space-y-6" style={{ fontSize: `${fontSize || 16}px` }}>
-      {/* Back button */}
+    <div className="max-w-3xl mx-auto space-y-8 animate-fade-in pb-20">
+      {/* Navigation Header */}
       <button
         onClick={onBack}
-        className="flex items-center space-x-2 text-emerald-600 dark:text-amber-400 hover:underline"
+        className="flex items-center space-x-2 space-x-reverse text-spiritual-primary hover:text-spiritual-dark transition-colors font-bold group"
       >
-        <svg className="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        <span className="font-arabic">رجوع لقائمة السور</span>
+        <span className="font-arabic text-lg">العودة للفهرس</span>
       </button>
 
-      {/* Surah Header */}
-      <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl p-8 shadow-lg text-center">
-        <h1 className="text-4xl font-bold text-gray-800 dark:text-slate-100 mb-3 font-arabic">
+      {/* Surah Title Card */}
+      <div className="text-center p-12 rounded-[3.5rem] bg-white dark:bg-slate-900 border-2 border-spiritual-gold/10 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-spiritual-gold/40 to-transparent"></div>
+        <h1 className="text-6xl font-bold text-spiritual-dark dark:text-spiritual-sand font-arabic mb-6">
           {surah.name}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-slate-400 mb-4">
-          {surah.englishName} - {surah.englishNameTranslation}
-        </p>
-        <div className="flex justify-center gap-6 text-sm text-gray-500 dark:text-slate-500">
-          <span className="font-arabic">السورة رقم {surah.number}</span>
-          <span className="font-arabic">{surah.numberOfAyahs} آية</span>
-          <span className="font-arabic">
+        <div className="flex justify-center items-center space-x-6 space-x-reverse text-slate-400 font-arabic tracking-wide">
+          <span className="bg-spiritual-gold/5 px-4 py-1 rounded-full border border-spiritual-gold/10">
             {surah.revelationType === 'Meccan' ? 'مكية' : 'مدنية'}
+          </span>
+          <span className="w-1.5 h-1.5 bg-spiritual-gold/30 rounded-full"></span>
+          <span className="bg-spiritual-gold/5 px-4 py-1 rounded-full border border-spiritual-gold/10">
+            {surah.numberOfAyahs} آية
           </span>
         </div>
       </div>
 
-      {/* Bismillah for all surahs except At-Tawbah (9) */}
-      {surah.number !== 9 && surah.number !== 1 && (
+      {/* Bismillah */}
+      {surah.number !== 9 && (
         <div className="text-center py-6">
-          <p
-            className="font-bold text-gray-800 dark:text-slate-100 font-arabic"
-            style={{ fontSize: `${fontSize * 1.5}px` }}
-          >
-            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+          <p className="quran-text text-5xl text-spiritual-dark dark:text-slate-100 opacity-90">
+            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
           </p>
         </div>
       )}
 
-      {/* Ayahs */}
-      <div className="space-y-4">
+      {/* Ayahs Display - Line by Line Card Layout */}
+      <div className="space-y-6">
         {surah.ayahs.map((ayah: any) => (
-          <div
+          <div 
             key={ayah.number}
-            className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow"
+            className="group relative bg-white/60 dark:bg-slate-900/60 p-8 rounded-[2.5rem] border border-white/20 hover:border-spiritual-gold/20 transition-all duration-500 hover:shadow-lg hover:scale-[1.01]"
           >
-            <p
-              className="leading-relaxed text-gray-800 dark:text-slate-100 font-arabic text-right mb-2"
-              style={{ fontSize: `${fontSize}px` }}
+            {/* Verse Number Marker */}
+            <div className="absolute top-6 right-6 flex items-center justify-center w-12 h-12 rounded-full border-2 border-spiritual-gold/20 text-spiritual-gold font-serif text-lg font-bold bg-white dark:bg-slate-900 group-hover:border-spiritual-gold group-hover:shadow-md transition-all duration-500">
+              {ayah.numberInSurah}
+            </div>
+
+            {/* Verse Text */}
+            <div 
+              className="quran-text text-right pr-16" 
+              style={{ fontSize: `${fontSize * 1.5}px` }}
             >
-              {ayah.text}
-              <span className="text-emerald-600 dark:text-amber-400 font-bold mx-2">
-                ﴿{ayah.numberInSurah}﴾
-              </span>
-            </p>
-            {ayah.sajda && typeof ayah.sajda === 'object' && (
-              <div className="mt-3 inline-block bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-3 py-1 rounded-md text-sm font-arabic">
-                {(ayah.sajda as any).obligatory ? 'سجدة واجبة' : 'سجدة مستحبة'}
-              </div>
-            )}
+              {ayah.text.replace('بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ', '')}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Footer with back button */}
-      <div className="text-center py-6">
+      {/* Navigation Footer */}
+      <div className="flex justify-center pt-12">
         <button
           onClick={onBack}
-          className="px-6 py-3 bg-emerald-600 dark:bg-amber-500 text-white rounded-xl hover:bg-emerald-700 dark:hover:bg-amber-600 transition-colors font-arabic"
+          className="group relative overflow-hidden px-12 py-5 bg-spiritual-dark text-white rounded-3xl hover:bg-spiritual-primary transition-all duration-500 shadow-xl font-arabic font-bold text-xl"
         >
-          رجوع لقائمة السور
+          <span className="relative z-10">تمت القراءة بحمد الله</span>
+          <div className="absolute top-0 left-0 w-full h-full bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
         </button>
       </div>
     </div>

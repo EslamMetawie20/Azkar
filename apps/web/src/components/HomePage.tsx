@@ -29,7 +29,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
         </svg>
       ),
-      bg: 'bg-white dark:bg-slate-800 border-2 border-spiritual-primary/20'
+      bg: 'bg-white dark:bg-slate-800 border-2 border-spiritual-dark/20'
     }
   ];
 
@@ -46,16 +46,16 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
           />
         </div>
         <div className="space-y-2">
-          <h2 className="text-3xl font-bold text-spiritual-dark dark:text-spiritual-sand font-arabic">
+          <h2 className="text-3xl font-bold text-spiritual-dark dark:text-spiritual-accent font-arabic tracking-wide">
             طريق النور
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 font-arabic italic">
+          <p className="text-spiritual-medium dark:text-slate-400 font-arabic italic">
             "ألا بذكر الله تطمئن القلوب"
           </p>
         </div>
       </div>
 
-      {/* Main Categories - Elegant Stack */}
+      {/* Main Categories */}
       <div className="grid grid-cols-1 gap-6 max-w-2xl mx-auto px-2">
         {categories.map((category) => (
           <button
@@ -65,42 +65,41 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
           >
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center space-x-6 space-x-reverse">
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110 ${category.slug === 'morning' ? 'bg-white/20' : 'bg-spiritual-primary/10 text-spiritual-primary'}`}>
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110 ${category.slug === 'morning' ? 'bg-white/20' : 'bg-spiritual-dark/10 text-spiritual-dark'}`}>
                   {category.icon}
                 </div>
                 <div className="text-right">
                   <h3 className="text-2xl font-bold font-arabic mb-1">
                     {category.title}
                   </h3>
-                  <p className={`text-sm font-arabic ${category.slug === 'morning' ? 'text-spiritual-light/80' : 'text-slate-500'}`}>
+                  <p className={`text-sm font-arabic ${category.slug === 'morning' ? 'text-spiritual-paper/80' : 'text-slate-500'}`}>
                     {category.description}
                   </p>
                 </div>
               </div>
-              <div className={`p-3 rounded-full transition-colors ${category.slug === 'morning' ? 'bg-white/10 group-hover:bg-white/20' : 'bg-spiritual-primary/5 group-hover:bg-spiritual-primary/10'}`}>
+              <div className={`p-3 rounded-full transition-colors ${category.slug === 'morning' ? 'bg-white/10 group-hover:bg-white/20' : 'bg-spiritual-dark/5 group-hover:bg-spiritual-dark/10 text-spiritual-dark'}`}>
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
             </div>
-            {/* Subtle Decorative Pattern Background */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 transition-transform duration-700 group-hover:scale-150"></div>
           </button>
         ))}
 
-        {/* Quran Section - Subtle & Elegant */}
+        {/* Quran Section */}
         <button
           onClick={onQuranSelect}
-          className="group flex items-center justify-between p-6 bg-spiritual-sand/30 dark:bg-spiritual-dark/20 border-2 border-spiritual-gold/20 rounded-[2rem] hover:border-spiritual-gold transition-all duration-300"
+          className="group flex items-center justify-between p-6 bg-white dark:bg-spiritual-dark/10 border-2 border-spiritual-dark/20 rounded-[2rem] hover:border-spiritual-dark transition-all duration-300 shadow-md"
         >
           <div className="flex items-center space-x-4 space-x-reverse">
             <span className="text-3xl filter grayscale group-hover:grayscale-0 transition-all duration-500">📖</span>
             <div className="text-right">
-              <h3 className="text-xl font-bold text-spiritual-dark dark:text-spiritual-sand font-arabic">القرآن الكريم</h3>
+              <h3 className="text-xl font-bold text-spiritual-dark dark:text-spiritual-accent font-arabic">القرآن الكريم</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 font-arabic">تلاوة وتدبر لآيات الله</p>
             </div>
           </div>
-          <div className="text-spiritual-gold">
+          <div className="text-spiritual-dark">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
@@ -108,9 +107,9 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
         </button>
       </div>
 
-      {/* Quote of the Day / Bottom Info */}
-      <div className="max-w-md mx-auto text-center pt-8 border-t border-spiritual-gold/10">
-        <p className="text-spiritual-primary dark:text-spiritual-gold font-arabic text-sm opacity-80">
+      {/* Quote Footer */}
+      <div className="max-w-md mx-auto text-center pt-8 border-t border-spiritual-dark/10">
+        <p className="text-spiritual-dark/60 dark:text-spiritual-accent/60 font-arabic text-sm">
           "فاذكروني أذكركم"
         </p>
       </div>

@@ -12,11 +12,11 @@ export default {
       },
       colors: {
         spiritual: {
-          dark: '#064e3b',    // Deep Emerald
-          primary: '#059669', // Emerald
-          light: '#ecfdf5',   // Soft mint
-          gold: '#d97706',    // Warm Gold
-          sand: '#fef3c7',    // Light Sand
+          dark: '#C5A67E',    // Deep Gold/Sand
+          medium: '#D1B996',  // Medium Sand
+          accent: '#DDCBB0',  // Accent Sand
+          light: '#EAD6CA',   // Light Beige
+          paper: '#F8F0E5',   // Lightest Paper/Background
         }
       }
     },

@@ -1,6 +1,8 @@
 @import "@fontsource/cairo/400.css";
 @import "@fontsource/cairo/600.css";
 @import "@fontsource/cairo/700.css";
+@import "@fontsource/amiri/400.css";
+@import "@fontsource/amiri/700.css";
 
 @tailwind base;
 @tailwind components;
@@ -8,41 +10,54 @@
 
 @layer base {
   body {
-    @apply font-arabic antialiased text-slate-800 bg-spiritual-light dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300;
+    @apply font-arabic antialiased text-slate-800 bg-spiritual-paper dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300;
+    /* Soft subtle texture effect for light mode */
     background-image: 
-      radial-gradient(at 0% 0%, rgba(5, 150, 105, 0.05) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(217, 119, 6, 0.05) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(197, 166, 126, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(221, 203, 176, 0.1) 0px, transparent 50%);
   }
 }
 
 @layer components {
+  .quran-text {
+    font-family: 'Amiri', serif;
+    line-height: 2.2;
+    direction: rtl;
+    @apply text-slate-900 dark:text-slate-100;
+  }
+
   .glass-card {
-    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-white/20 dark:border-slate-800/50 shadow-xl;
+    @apply bg-white/90 dark:bg-slate-900/80 backdrop-blur-md border border-spiritual-light dark:border-slate-800 shadow-lg;
   }
   
   .spiritual-gradient {
-    @apply bg-gradient-to-br from-spiritual-dark to-spiritual-primary text-white;
+    @apply bg-gradient-to-br from-spiritual-dark to-spiritual-medium text-white;
   }
 
   .gold-border {
-    @apply border-2 border-spiritual-gold/30 hover:border-spiritual-gold transition-colors duration-300;
+    @apply border-2 border-spiritual-dark/30 hover:border-spiritual-dark transition-colors duration-300;
+  }
+  
+  .btn-primary {
+    @apply bg-spiritual-dark text-white hover:bg-spiritual-medium transition-all duration-300 shadow-md hover:shadow-lg active:scale-95;
   }
 }
 
-/* Custom Scrollbar for a cleaner look */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-spiritual-primary/20 rounded-full hover:bg-spiritual-primary/40;
-}
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { @apply bg-transparent; }
+::-webkit-scrollbar-thumb { @apply bg-spiritual-dark/20 rounded-full hover:bg-spiritual-dark/40; }
 
 .arabic-text {
   line-height: 1.8;
   word-spacing: 2px;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
