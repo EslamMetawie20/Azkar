@@ -1,6 +1,5 @@
 import React from 'react';
 import type { CategorySlug } from '@azkar/shared';
-// Standard way to import images in Vite
 import bismillahImg from '../assets/bismilah3.png';
 
 interface HomePageProps {
@@ -34,13 +33,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
             src={bismillahImg}
             alt="بسم الله الرحمن الرحيم"
             className="object-contain dark:brightness-0 dark:invert"
-            style={{ 
-              width: '100%',
-              maxWidth: '500px',
-              height: 'auto',
-              imageRendering: 'auto', // High quality
-              display: 'block'
-            }}
+            style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '12rem' }}
           />
         </div>
 
@@ -52,7 +45,6 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
         </p>
       </div>
 
-      {/* Category cards */}
       <div className="space-y-4">
         {categories.map((category) => (
           <button
@@ -114,7 +106,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
           {[
             { icon: '📱', text: 'يعمل بدون اتصال بالإنترنت' },
             { icon: '🕒', text: 'عداد تلقائي لكل ذكر' },
-            { icon: '🎯', text: 'تتبع التقدم اليومי' },
+            { icon: '🎯', text: 'تتبع التقدم اليومي' },
             { icon: '📖', text: 'نصوص أصيلة من حصن المسلم' }
           ].map((feature, index) => (
             <div key={index} className="flex items-center space-x-3 space-x-reverse">

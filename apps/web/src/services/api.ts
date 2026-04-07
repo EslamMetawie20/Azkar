@@ -4,19 +4,18 @@ import { storage } from '../utils/storage';
 class ApiService {
   private async fetchLocalData(): Promise<any> {
     const timestamp = new Date().getTime();
-    // Absolute paths for GitHub Pages
-    const urls = [
-      `/Azkar/azkar.json?v=${timestamp}`,
-      `azkar.json?v=${timestamp}`
-    ];
+    // Use relative path with cache busting
+    const url = `azkar.json?v=${timestamp}`;
     
-    for (const url of urls) {
-      try {
-        const response = await fetch(url);
-        if (response.ok) return await response.json();
-      } catch (err) {}
+    try {
+      console.log('Fetching from:', url);
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (err) {
+      console.error('Fetch failed:', err);
+      throw err;
     }
-    throw new Error('Load failed');
   }
 
   async getCategories(): Promise<Category[]> {
@@ -60,14 +59,10 @@ class ApiService {
         };
       });
 
-      // Always save fresh data to overwrite old "null" data
       await storage.saveAzkar(processedAzkar, categorySlug);
       return processedAzkar;
     } catch (error) {
-      // If offline, use storage
-      const cached = await storage.getAzkarByCategory(categorySlug);
-      if (cached && cached.length > 0) return cached;
-      return [];
+      return await storage.getAzkarByCategory(categorySlug);
     }
   }
 
