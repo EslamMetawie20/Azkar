@@ -1,21 +1,8 @@
 import type { Category, Zikr, CategorySlug, TasbihOption } from '@azkar/shared';
 import { storage } from '../utils/storage';
+import { azkarSabahMasaaData } from '../data/azkarData';
 
 class ApiService {
-  private async fetchLocalData(): Promise<any> {
-    const timestamp = new Date().getTime();
-    // Try multiple path variants to be safe
-    const paths = [`azkar.json?cb=${timestamp}`, `./azkar.json?cb=${timestamp}`];
-    
-    for (const path of paths) {
-      try {
-        const response = await fetch(path);
-        if (response.ok) return await response.json();
-      } catch (e) {}
-    }
-    throw new Error('Data not found');
-  }
-
   async getCategories(): Promise<Category[]> {
     return [
       { id: 1, nameAr: "أذكار الصباح", slug: "morning", orderIndex: 1 },
@@ -25,41 +12,15 @@ class ApiService {
 
   async getAzkarByCategory(categorySlug: CategorySlug): Promise<Zikr[]> {
     try {
-      const data = await this.fetchLocalData();
-      const combinedKey = "أذكار الصباح والمساء";
-      const categoryData = data[combinedKey];
-
-      if (!categoryData || !categoryData.text) return [];
-
-      const azkarTexts: string[] = categoryData.text.filter((text: string) => text && text.trim().length > 0);
-      const footnotes: string[] = categoryData.footnote || [];
-
-      const processedAzkar: Zikr[] = azkarTexts.map((text, index) => {
-        let repeatMin = 1;
-        if (text.includes('ثلاث مرات') || text.includes('ثلاث')) repeatMin = 3;
-        else if (text.includes('سبع مرات') || text.includes('سبع')) repeatMin = 7;
-        else if (text.includes('مائة مرة') || text.includes('مائة')) repeatMin = 100;
-        else if (text.includes('عشر مرات') || text.includes('عشر')) repeatMin = 10;
-        else if (text.includes('أربع مرات') || text.includes('أربع')) repeatMin = 4;
-
-        const cleanText = text
-          .replace(/\(\s*.*?\s*مرات?\s*\)/g, '')
-          .replace(/(ثلاث|أربع|خمس|ست|سبع|ثمان|تسع|عشر|مائة)\s*مرات?/g, '')
-          .replace(/\s+/g, ' ')
-          .trim();
-
-        return {
-          id: index + 1,
-          textAr: cleanText,
-          footnoteAr: footnotes[index] || undefined,
-          repeatMin: repeatMin,
-          orderIndex: index + 1
-        };
-      });
-
-      await storage.saveAzkar(processedAzkar, categorySlug);
-      return processedAzkar;
+      // Return hardcoded data directly - no network request, impossible to fail
+      if (categorySlug === 'morning' || categorySlug === 'evening') {
+        const azkarData = [...azkarSabahMasaaData];
+        await storage.saveAzkar(azkarData, categorySlug);
+        return azkarData;
+      }
+      return [];
     } catch (error) {
+      console.error('Error loading azkar:', error);
       return await storage.getAzkarByCategory(categorySlug);
     }
   }
@@ -83,7 +44,9 @@ class ApiService {
       await this.getAzkarByCategory('morning');
       await this.getAzkarByCategory('evening');
       return true;
-    } catch (error) { return false; }
+    } catch (error) {
+      return false;
+    }
   }
 }
 
