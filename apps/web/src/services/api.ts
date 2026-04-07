@@ -4,18 +4,13 @@ import { storage } from '../utils/storage';
 class ApiService {
   private async fetchLocalData(): Promise<any> {
     const timestamp = new Date().getTime();
-    // Use relative path with cache busting
-    const url = `azkar.json?v=${timestamp}`;
+    // Vite will replace BASE_URL with /Azkar/ automatically
+    const url = `${import.meta.env.BASE_URL}azkar.json?v=${timestamp}`;
     
-    try {
-      console.log('Fetching from:', url);
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return await response.json();
-    } catch (err) {
-      console.error('Fetch failed:', err);
-      throw err;
-    }
+    console.log('Fetching azkar data from:', url);
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status} at ${url}`);
+    return await response.json();
   }
 
   async getCategories(): Promise<Category[]> {
@@ -62,6 +57,7 @@ class ApiService {
       await storage.saveAzkar(processedAzkar, categorySlug);
       return processedAzkar;
     } catch (error) {
+      console.error('Final fallback to storage due to:', error);
       return await storage.getAzkarByCategory(categorySlug);
     }
   }
@@ -85,9 +81,7 @@ class ApiService {
       await this.getAzkarByCategory('morning');
       await this.getAzkarByCategory('evening');
       return true;
-    } catch (error) {
-      return false;
-    }
+    } catch (error) { return false; }
   }
 }
 

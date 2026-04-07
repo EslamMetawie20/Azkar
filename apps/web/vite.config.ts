@@ -5,7 +5,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/Azkar/' : '/',
+  base: '/Azkar/', // Hardcoded for GitHub Pages to be 100% sure
   resolve: {
     alias: {
       '@azkar/shared': fileURLToPath(new URL('../../packages/shared/src/index.ts', import.meta.url))
@@ -36,21 +36,6 @@ export default defineConfig({
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png'
-          }
-        ]
-      },
-      workbox: {
-        runtimeCaching: [
-          {
-            urlPattern: /^http:\/\/localhost:8080\/api\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-              }
-            }
           }
         ]
       }
