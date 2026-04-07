@@ -100,7 +100,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
 
       <div className="mt-12 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl p-6 shadow-lg">
         <h3 className="text-lg font-bold text-gray-800 dark:text-slate-100 mb-4 text-center font-arabic">
-          مميزات التطبيق (نسخة v3.0)
+          مميزات التطبيق
         </h3>
         <div className="space-y-3">
           {[

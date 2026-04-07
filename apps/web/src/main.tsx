@@ -4,7 +4,7 @@ import './index.css'
 import App from './App.tsx'
 
 // Force clear old backend-seeking databases
-const DB_VERSION = '3.0.0';
+const DB_VERSION = '1.0.3';
 if (localStorage.getItem('azkar_version') !== DB_VERSION) {
   if (window.indexedDB) {
     indexedDB.deleteDatabase('azkar-db');
