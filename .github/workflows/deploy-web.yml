@@ -3,9 +3,12 @@ name: Deploy Web App
 on:
   push:
     branches: [ main, master ]
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
@@ -23,16 +26,20 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build Shared Package
+      - name: Build Shared
         run: npm run build --workspace=@azkar/shared
 
-      - name: Build Web App
+      - name: Build Web
         run: npm run build --workspace=@azkar/web
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './apps/web/dist'
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: apps/web/dist
-          branch: gh-pages
+        id: deployment
+        uses: actions/deploy-pages@v4
