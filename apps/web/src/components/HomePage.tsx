@@ -1,5 +1,6 @@
 import React from 'react';
 import type { CategorySlug } from '@azkar/shared';
+// Standard way to import images in Vite
 import bismillahImg from '../assets/bismilah3.png';
 
 interface HomePageProps {
@@ -34,9 +35,10 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
             alt="بسم الله الرحمن الرحيم"
             className="object-contain dark:brightness-0 dark:invert"
             style={{ 
-              width: 'auto', // Back to auto for clarity
-              maxWidth: '100%', 
-              maxHeight: '15rem', // Limited height to prevent blur
+              width: '100%',
+              maxWidth: '500px',
+              height: 'auto',
+              imageRendering: 'auto', // High quality
               display: 'block'
             }}
           />

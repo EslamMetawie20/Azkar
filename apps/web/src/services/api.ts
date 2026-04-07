@@ -4,9 +4,10 @@ import { storage } from '../utils/storage';
 class ApiService {
   private async fetchLocalData(): Promise<any> {
     const timestamp = new Date().getTime();
+    // Absolute paths for GitHub Pages
     const urls = [
-      `azkar.json?v=${timestamp}`,
-      `${import.meta.env.BASE_URL}azkar.json?v=${timestamp}`.replace(/\/+/g, '/').replace(':/', '://')
+      `/Azkar/azkar.json?v=${timestamp}`,
+      `azkar.json?v=${timestamp}`
     ];
     
     for (const url of urls) {
@@ -44,7 +45,6 @@ class ApiService {
         else if (text.includes('عشر مرات') || text.includes('عشر')) repeatMin = 10;
         else if (text.includes('أربع مرات') || text.includes('أربع')) repeatMin = 4;
 
-        // FIXED: Using Arabic letter 'ت' instead of English 't'
         const cleanText = text
           .replace(/\(\s*.*?\s*مرات?\s*\)/g, '')
           .replace(/(ثلاث|أربع|خمس|ست|سبع|ثمان|تسع|عشر|مائة)\s*مرات?/g, '')
@@ -60,10 +60,14 @@ class ApiService {
         };
       });
 
+      // Always save fresh data to overwrite old "null" data
       await storage.saveAzkar(processedAzkar, categorySlug);
       return processedAzkar;
     } catch (error) {
-      return await storage.getAzkarByCategory(categorySlug);
+      // If offline, use storage
+      const cached = await storage.getAzkarByCategory(categorySlug);
+      if (cached && cached.length > 0) return cached;
+      return [];
     }
   }
 
