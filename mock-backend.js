@@ -16,16 +16,19 @@ try {
 }
 
 // Extract and process azkar
-function processAzkarData() {
-  const morningEvening = azkarData["أذكار الصباح والمساء"];
-  if (!morningEvening || !morningEvening.text) {
-    throw new Error('Could not find morning/evening azkar data');
+function processAzkarData(category) {
+  const key = category === 'morning' ? "أذكار الصباح" : "أذكار المساء";
+  const categoryData = azkarData[key];
+  
+  if (!categoryData || !categoryData.text) {
+    console.warn(`Could not find data for category: ${key}`);
+    return [];
   }
 
-  const azkarTexts = morningEvening.text.filter(text => text && text.trim().length > 0);
-  const footnotes = morningEvening.footnote || [];
+  const azkarTexts = categoryData.text.filter(text => text && text.trim().length > 0);
+  const footnotes = categoryData.footnote || [];
 
-  const processedAzkar = azkarTexts.map((text, index) => {
+  return azkarTexts.map((text, index) => {
     // Extract repeat count
     let repeatMin = 1;
 
@@ -44,15 +47,13 @@ function processAzkarData() {
       .trim();
 
     return {
-      id: index + 1,
+      id: `${category}-${index + 1}`,
       textAr: cleanText,
       footnoteAr: footnotes[index] || null,
       repeatMin: repeatMin,
       orderIndex: index + 1
     };
   });
-
-  return processedAzkar;
 }
 
 // Mock API responses
@@ -60,8 +61,6 @@ const categories = [
   { id: 1, nameAr: "أذكار الصباح", slug: "morning", orderIndex: 1 },
   { id: 2, nameAr: "أذكار المساء", slug: "evening", orderIndex: 2 }
 ];
-
-const azkarList = processAzkarData();
 
 const server = http.createServer((req, res) => {
   // Enable CORS
@@ -101,9 +100,10 @@ const server = http.createServer((req, res) => {
     const category = url.searchParams.get('category');
     console.log(`🔍 Category parameter received: '${category}'`);
     if (category === 'morning' || category === 'evening') {
-      console.log(`✅ Valid category: ${category}, returning azkar data`);
+      const data = processAzkarData(category);
+      console.log(`✅ Category: ${category}, returning ${data.length} items`);
       res.writeHead(200);
-      res.end(JSON.stringify(azkarList));
+      res.end(JSON.stringify(data));
     } else {
       console.log(`❌ Invalid/missing category: '${category}'`);
       res.writeHead(400);
