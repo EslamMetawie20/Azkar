@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Zikr, CategorySlug } from '@azkar/shared';
+import type { Zikr, CategorySlug } from '@azkar/shared';
 import { apiService } from '../services/api';
 import { storage } from '../utils/storage';
 import { useFontSize } from '../contexts/FontContext';
