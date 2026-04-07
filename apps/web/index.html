@@ -1,26 +1,33 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="تطبيق الأذكار والأدعية الإسلامية للصباح والمساء" />
     <meta name="theme-color" content="#059669" />
-    <title>أذكار وأدعية</title>
-  </head>
-  <body dir="rtl" class="font-arabic">
-    <div id="root"></div>
+    <title>Azkar v2 - NEUE VERSION</title>
     <script>
-      // Force unregister all service workers to clear old backend-seeking caches
+      // KILL ALL SERVICE WORKERS IMMEDIATELY
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
           for(let registration of registrations) {
-            registration.unregister();
-            console.log('Old Service Worker cleared');
+            registration.unregister().then(() => {
+              console.log('Old Service Worker killed');
+              window.location.reload(true);
+            });
           }
         });
       }
+      // Clear all possible caches
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          for (let name of names) caches.delete(name);
+        });
+      }
     </script>
+  </head>
+  <body dir="rtl" class="font-arabic">
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

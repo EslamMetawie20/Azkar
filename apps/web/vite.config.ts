@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  base: './', // Use relative paths - most robust for GH Pages
+  base: '/Azkar/', // Explicit absolute path for GitHub Pages
   resolve: {
     alias: {
       '@azkar/shared': fileURLToPath(new URL('../../packages/shared/src/index.ts', import.meta.url))
@@ -13,7 +13,6 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    assetsDir: 'assets',
-    sourcemap: false
+    assetsDir: 'assets'
   }
 })
