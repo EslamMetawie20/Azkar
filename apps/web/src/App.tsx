@@ -84,6 +84,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-slate-900 dark:to-slate-800">
+      <div className="bg-red-600 text-white text-center py-4 font-bold text-xl">
+        VERSION 3.0.0 AKTIV - KEIN BACKEND NÖTIG
+      </div>
       {/* Status bar */}
       {!isOnline && (
         <div className="bg-amber-500 dark:bg-amber-600 text-white text-center py-2 px-4 text-sm">
