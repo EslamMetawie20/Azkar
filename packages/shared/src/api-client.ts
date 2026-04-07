@@ -3,7 +3,7 @@ import type { Category, Zikr, HealthResponse, CategorySlug, TasbihOption } from 
 export class AzkarApiClient {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'http://localhost:8080') {
+  constructor(baseUrl: string = '') {
     this.baseUrl = baseUrl.replace(/\/$/, ''); // Remove trailing slash
   }
 
