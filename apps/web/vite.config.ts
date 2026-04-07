@@ -9,9 +9,16 @@ export default defineConfig({
       '@azkar/shared': fileURLToPath(new URL('../../packages/shared/src/index.ts', import.meta.url))
     }
   },
-  plugins: [react()], // PWA Plugin removed
+  plugins: [react()],
   build: {
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        entryFileNames: `assets/[name]-v3-[hash].js`,
+        chunkFileNames: `assets/[name]-v3-[hash].js`,
+        assetFileNames: `assets/[name]-v3-[hash].[ext]`
+      }
+    }
   }
 })
