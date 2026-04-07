@@ -3,11 +3,21 @@ import { storage } from '../utils/storage';
 
 class ApiService {
   private async fetchLocalData(): Promise<any> {
-    const response = await fetch(`${import.meta.env.BASE_URL}azkar.json`);
-    if (!response.ok) {
-      throw new Error('Failed to load local azkar.json');
+    const url = `${import.meta.env.BASE_URL}azkar.json`;
+    console.log('Fetching azkar data from:', url);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error('Fetch failed with status:', response.status);
+        throw new Error(`Failed to load local azkar.json: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Successfully loaded azkar.json. Keys:', Object.keys(data));
+      return data;
+    } catch (err) {
+      console.error('Error fetching local data:', err);
+      throw err;
     }
-    return await response.json();
   }
 
   async getCategories(): Promise<Category[]> {
