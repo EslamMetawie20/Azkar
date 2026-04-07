@@ -54,7 +54,7 @@ class ApiService {
           .trim();
 
         return {
-          id: `${categorySlug}-${index + 1}`,
+          id: index + 1,
           textAr: cleanText,
           footnoteAr: footnotes[index] || undefined,
           repeatMin: repeatMin,
