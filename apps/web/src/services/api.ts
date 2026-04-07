@@ -4,13 +4,16 @@ import { storage } from '../utils/storage';
 class ApiService {
   private async fetchLocalData(): Promise<any> {
     const timestamp = new Date().getTime();
-    // Vite will replace BASE_URL with /Azkar/ automatically
-    const url = `${import.meta.env.BASE_URL}azkar.json?v=${timestamp}`;
+    // Try multiple path variants to be safe
+    const paths = [`azkar.json?cb=${timestamp}`, `./azkar.json?cb=${timestamp}`];
     
-    console.log('Fetching azkar data from:', url);
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status} at ${url}`);
-    return await response.json();
+    for (const path of paths) {
+      try {
+        const response = await fetch(path);
+        if (response.ok) return await response.json();
+      } catch (e) {}
+    }
+    throw new Error('Data not found');
   }
 
   async getCategories(): Promise<Category[]> {
@@ -57,7 +60,6 @@ class ApiService {
       await storage.saveAzkar(processedAzkar, categorySlug);
       return processedAzkar;
     } catch (error) {
-      console.error('Final fallback to storage due to:', error);
       return await storage.getAzkarByCategory(categorySlug);
     }
   }
