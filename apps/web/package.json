@@ -12,7 +12,7 @@
     "format": "prettier --write src/**/*.{ts,tsx}"
   },
   "dependencies": {
-    "@azkar/shared": "file:../../packages/shared",
+    "@azkar/shared": "*",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fontsource/cairo": "^5.2.7",

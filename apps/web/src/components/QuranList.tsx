@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Surah } from '@azkar/shared';
 import { quranApi } from '@azkar/shared';
-import { useTheme } from '../contexts/ThemeContext';
 import { useFontSize } from '../contexts/FontContext';
 
 interface QuranListProps {
@@ -9,7 +8,6 @@ interface QuranListProps {
 }
 
 const QuranList: React.FC<QuranListProps> = ({ onSurahSelect }) => {
-  const { isDark } = useTheme();
   const { fontSize } = useFontSize();
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [loading, setLoading] = useState(true);

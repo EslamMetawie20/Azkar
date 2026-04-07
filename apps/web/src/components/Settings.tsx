@@ -66,25 +66,10 @@ const Settings: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
   const { fontSize, setFontSize } = useFontSize();
   const [tempFontSize, setTempFontSize] = useState(fontSize);
-  const [progressData, setProgressData] = useState<any[]>([]);
 
   useEffect(() => {
     setTempFontSize(fontSize);
   }, [fontSize]);
-
-  useEffect(() => {
-    // Load progress data
-    loadProgressData();
-  }, []);
-
-  const loadProgressData = async () => {
-    try {
-      const progress = await storage.getAllProgress();
-      setProgressData(progress);
-    } catch (error) {
-      console.error('Failed to load progress data:', error);
-    }
-  };
 
   const handleTempFontSizeChange = (newSize: number) => {
     setTempFontSize(newSize);
@@ -92,20 +77,6 @@ const Settings: React.FC = () => {
 
   const applyFontSize = () => {
     setFontSize(tempFontSize);
-  };
-
-
-  const clearAllProgress = async () => {
-    if (confirm('هل أنت متأكد من حذف جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.')) {
-      try {
-        await storage.clearProgress();
-        setProgressData([]);
-        alert('تم حذف جميع البيانات بنجاح');
-      } catch (error) {
-        console.error('Failed to clear progress:', error);
-        alert('حدث خطأ أثناء حذف البيانات');
-      }
-    }
   };
 
   const clearAllCache = async () => {
@@ -119,17 +90,6 @@ const Settings: React.FC = () => {
         alert('حدث خطأ أثناء حذف البيانات');
       }
     }
-  };
-
-  const exportProgress = () => {
-    const dataStr = JSON.stringify(progressData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'azkar-progress.json';
-    link.click();
-    URL.revokeObjectURL(url);
   };
 
   return (

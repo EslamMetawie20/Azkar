@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { SurahWithAyahs } from '@azkar/shared';
 import { quranApi } from '@azkar/shared';
-import { useTheme } from '../contexts/ThemeContext';
 import { useFontSize } from '../contexts/FontContext';
 
 interface SurahViewerProps {
@@ -10,7 +9,6 @@ interface SurahViewerProps {
 }
 
 const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
-  const { isDark } = useTheme();
   const { fontSize } = useFontSize();
   const [surah, setSurah] = useState<SurahWithAyahs | null>(null);
   const [loading, setLoading] = useState(true);
@@ -95,7 +93,7 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
 
       {/* Ayahs */}
       <div className="space-y-4">
-        {surah.ayahs.map((ayah) => (
+        {surah.ayahs.map((ayah: any) => (
           <div
             key={ayah.number}
             className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow"
@@ -111,7 +109,7 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
             </p>
             {ayah.sajda && typeof ayah.sajda === 'object' && (
               <div className="mt-3 inline-block bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-3 py-1 rounded-md text-sm font-arabic">
-                {ayah.sajda.obligatory ? 'سجدة واجبة' : 'سجدة مستحبة'}
+                {(ayah.sajda as any).obligatory ? 'سجدة واجبة' : 'سجدة مستحبة'}
               </div>
             )}
           </div>

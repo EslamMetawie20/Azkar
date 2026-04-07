@@ -73,7 +73,7 @@ const TasbihCounter: React.FC = () => {
     completedCounts += currentCount;
 
     // Calculate total possible counts
-    const totalCounts = selectedOption.items.reduce((sum, item) => sum + item.count, 0);
+    const totalCounts = selectedOption.items.reduce((sum: number, item: any) => sum + item.count, 0);
 
     return Math.round((completedCounts / totalCounts) * 100);
   };
@@ -110,7 +110,7 @@ const TasbihCounter: React.FC = () => {
                   {option.nameAr}
                 </h3>
                 <div className="text-sm text-gray-600 dark:text-slate-400 font-arabic">
-                  {option.items.map((item, index) => (
+                  {option.items.map((item: any, index: number) => (
                     <span key={item.id}>
                       {item.textAr} ({item.count})
                       {index < option.items.length - 1 && ' • '}

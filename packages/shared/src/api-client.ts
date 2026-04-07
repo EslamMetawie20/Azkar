@@ -1,4 +1,4 @@
-import { Category, Zikr, HealthResponse, CategorySlug } from './types';
+import type { Category, Zikr, HealthResponse, CategorySlug, TasbihOption } from './types';
 
 export class AzkarApiClient {
   private baseUrl: string;
@@ -42,6 +42,10 @@ export class AzkarApiClient {
   async getHealth(): Promise<HealthResponse> {
     return this.request<HealthResponse>('/api/v1/health');
   }
+
+  async getTasbihOptions(): Promise<TasbihOption[]> {
+    return this.request<TasbihOption[]>('/api/v1/tasbih/options');
+  }
 }
 
 // Factory function for creating API client instances
@@ -51,8 +55,10 @@ export function createApi(baseUrl?: string): AzkarApiClient {
 
 // Custom error class
 export class ApiError extends Error {
-  constructor(message: string, public status: number) {
+  status: number;
+  constructor(message: string, status: number) {
     super(message);
     this.name = 'ApiError';
+    this.status = status;
   }
 }

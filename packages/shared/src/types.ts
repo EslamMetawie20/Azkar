@@ -45,3 +45,15 @@ export interface SurahWithAyahs extends Surah {
   ayahs: Ayah[];
 }
 
+export interface TasbihItem {
+  id: string;
+  textAr: string;
+  count: number;
+}
+
+export interface TasbihOption {
+  id: string;
+  nameAr: string;
+  items: TasbihItem[];
+}
+

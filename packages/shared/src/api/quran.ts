@@ -1,4 +1,4 @@
-import { Surah, SurahWithAyahs } from '../types';
+import type { Surah, SurahWithAyahs } from '../types';
 
 const ALQURAN_API_BASE = 'https://api.alquran.cloud/v1';
 

@@ -1,9 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? '/Azkar/' : '/',
+  resolve: {
+    alias: {
+      '@azkar/shared': fileURLToPath(new URL('../../packages/shared/src/index.ts', import.meta.url))
+    }
+  },
   plugins: [
     react(),
     VitePWA({

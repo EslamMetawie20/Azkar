@@ -1,0 +1,35 @@
+name: Deploy Web App
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Shared Package
+        run: npm run build --workspace=@azkar/shared
+
+      - name: Build Web App
+        run: npm run build --workspace=@azkar/web
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: apps/web/dist
+          branch: gh-pages

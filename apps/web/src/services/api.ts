@@ -1,9 +1,9 @@
 import { createApi } from '@azkar/shared';
-import type { Category, Zikr, CategorySlug } from '@azkar/shared';
+import type { Category, Zikr, CategorySlug, TasbihOption } from '@azkar/shared';
 import { storage } from '../utils/storage';
 
 class ApiService {
-  private api = createApi('http://localhost:8080');
+  private api = createApi(import.meta.env.VITE_API_URL || 'http://localhost:8080');
 
   async getCategories(): Promise<Category[]> {
     try {
@@ -24,6 +24,25 @@ class ApiService {
     } catch (error) {
       console.warn(`Failed to fetch azkar for ${categorySlug} from API, falling back to cache:`, error);
       return await storage.getAzkarByCategory(categorySlug);
+    }
+  }
+
+  async getTasbihOptions(): Promise<TasbihOption[]> {
+    try {
+      return await this.api.getTasbihOptions();
+    } catch (error) {
+      console.warn('Failed to fetch tasbih options from API, using mock data:', error);
+      return [
+        {
+          id: 'standard',
+          nameAr: 'تسبيح عام',
+          items: [
+            { id: '1', textAr: 'سبحان الله', count: 33 },
+            { id: '2', textAr: 'الحمد لله', count: 33 },
+            { id: '3', textAr: 'الله أكبر', count: 34 }
+          ]
+        }
+      ];
     }
   }
 

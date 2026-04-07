@@ -1,21 +1,21 @@
-# Use OpenJDK 21 as base image
-FROM openjdk:21-jdk-slim
-
-# Set working directory
+# Stage 1: Build
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+# Copy pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Download dependencies
-RUN ./mvnw dependency:go-offline
-
-# Copy source code
+# Copy source code and build
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Build the application
-RUN ./mvnw clean package -DskipTests
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+
+# Copy built jar from build stage
+COPY --from=build /app/target/*.jar app.jar
 
 # Create data directory
 RUN mkdir -p data
@@ -24,4 +24,4 @@ RUN mkdir -p data
 EXPOSE 8080
 
 # Run the application
-CMD ["java", "-jar", "target/backend-1.0.0.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
