@@ -12,5 +12,16 @@
   </head>
   <body dir="rtl" class="font-arabic">
     <div id="root"></div>
+    <script>
+      // Force unregister all service workers to clear old backend-seeking caches
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+            console.log('Old Service Worker cleared');
+          }
+        });
+      }
+    </script>
   </body>
 </html>
