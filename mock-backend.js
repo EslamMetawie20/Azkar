@@ -10,6 +10,8 @@ try {
   const rawData = fs.readFileSync(dataPath, 'utf8');
   azkarData = JSON.parse(rawData);
   console.log('✅ Loaded hisn_almuslim.json successfully');
+  const allKeys = Object.keys(azkarData);
+  console.log('Total keys in JSON:', allKeys.length);
 } catch (error) {
   console.error('❌ Failed to load data:', error.message);
   process.exit(1);
@@ -17,13 +19,25 @@ try {
 
 // Extract and process azkar
 function processAzkarData(category) {
-  const key = category === 'morning' ? "أذكار الصباح" : "أذكار المساء";
-  const categoryData = azkarData[key];
+  // Try different possible keys if the exact one fails
+  const possibleKeys = ["أذكار الصباح والمساء", "اذكار الصباح والمساء", "أذكار الصباح والمساء "];
+  let categoryData = null;
+  let usedKey = "";
+
+  for (const k of possibleKeys) {
+    if (azkarData[k]) {
+      categoryData = azkarData[k];
+      usedKey = k;
+      break;
+    }
+  }
   
   if (!categoryData || !categoryData.text) {
-    console.warn(`Could not find data for category: ${key}`);
+    console.warn(`Could not find data for any of these keys: ${possibleKeys.join(', ')}`);
     return [];
   }
+
+  console.log(`Found data using key: "${usedKey}" for category: ${category}`);
 
   const azkarTexts = categoryData.text.filter(text => text && text.trim().length > 0);
   const footnotes = categoryData.footnote || [];
@@ -39,7 +53,7 @@ function processAzkarData(category) {
     else if (text.includes('عشر مرات') || text.includes('عشر')) repeatMin = 10;
     else if (text.includes('أربع مرات') || text.includes('أربع')) repeatMin = 4;
 
-    // Clean text by removing repeat indicators
+    // Clean text by removing repeat indicators - FIX: changed 't' back to 'ت'
     const cleanText = text
       .replace(/\(\s*.*?\s*مرا?ت?\s*\)/g, '')
       .replace(/(ثلاث|أربع|خمس|ست|سبع|ثمان|تسع|عشر|مائة)\s*مرا?ت?/g, '')
@@ -57,7 +71,7 @@ function processAzkarData(category) {
 }
 
 // Mock API responses
-const categories = [
+const categoriesList = [
   { id: 1, nameAr: "أذكار الصباح", slug: "morning", orderIndex: 1 },
   { id: 2, nameAr: "أذكار المساء", slug: "evening", orderIndex: 2 }
 ];
@@ -79,7 +93,7 @@ const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const pathname = url.pathname;
 
-  console.log(`${req.method} ${pathname}`);
+  console.log(`${req.method} ${pathname} ${url.search}`);
 
   // Health check
   if (pathname === '/api/v1/health') {
@@ -91,17 +105,15 @@ const server = http.createServer((req, res) => {
   // Categories endpoint
   if (pathname === '/api/v1/categories') {
     res.writeHead(200);
-    res.end(JSON.stringify(categories));
+    res.end(JSON.stringify(categoriesList));
     return;
   }
 
   // Azkar endpoint
   if (pathname === '/api/v1/azkar') {
     const category = url.searchParams.get('category');
-    console.log(`🔍 Category parameter received: '${category}'`);
     if (category === 'morning' || category === 'evening') {
       const data = processAzkarData(category);
-      console.log(`✅ Category: ${category}, returning ${data.length} items`);
       res.writeHead(200);
       res.end(JSON.stringify(data));
     } else {
@@ -125,5 +137,5 @@ server.listen(PORT, () => {
   console.log(`   GET http://localhost:${PORT}/api/v1/categories`);
   console.log(`   GET http://localhost:${PORT}/api/v1/azkar?category=morning`);
   console.log(`   GET http://localhost:${PORT}/api/v1/azkar?category=evening`);
-  console.log(`\n✅ Ready to serve data to the web app!`);
+  console.log(`\n✅ Ready to serve data!`);
 });
