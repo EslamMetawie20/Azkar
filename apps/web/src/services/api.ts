@@ -3,28 +3,17 @@ import { storage } from '../utils/storage';
 
 class ApiService {
   private async fetchLocalData(): Promise<any> {
-    // Robust URL construction
-    const baseUrl = import.meta.env.BASE_URL.endsWith('/') 
-      ? import.meta.env.BASE_URL 
-      : `${import.meta.env.BASE_URL}/`;
+    const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
     const url = `${baseUrl}azkar.json`.replace(/\/+/g, '/').replace(':/', '://');
-    
-    console.log('Fetching azkar data from:', url);
     
     try {
       const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Failed to load: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return await response.json();
     } catch (err) {
-      // Fallback for different environments
-      if (url.includes('/Azkar/')) {
-        console.log('Trying fallback to root azkar.json');
-        const fallbackRes = await fetch('azkar.json');
-        return await fallbackRes.json();
-      }
-      throw err;
+      console.warn('Primary fetch failed, trying fallback');
+      const fallbackResponse = await fetch('azkar.json');
+      return await fallbackResponse.json();
     }
   }
 
@@ -41,14 +30,12 @@ class ApiService {
     try {
       const data = await this.fetchLocalData();
       
-      // The keys in your JSON are exactly these:
-      const morningKey = "أذكار الصباح والمساء"; 
-      const eveningKey = "أذكار الصباح والمساء";
-      
-      const categoryData = categorySlug === 'morning' ? data[morningKey] : data[eveningKey];
+      // We use the same combined key for both morning and evening
+      const combinedKey = "أذكار الصباح والمساء";
+      const categoryData = data[combinedKey];
 
       if (!categoryData || !categoryData.text) {
-        console.error(`Key not found in JSON for ${categorySlug}`);
+        console.error('Data not found in JSON');
         return [];
       }
 
@@ -78,26 +65,25 @@ class ApiService {
         };
       });
 
+      // Save using the specific slug to ensure storage works for both
       await storage.saveAzkar(processedAzkar, categorySlug);
       return processedAzkar;
     } catch (error) {
-      console.error(`Failed to load azkar for ${categorySlug}:`, error);
+      console.error('Fetch error:', error);
       return await storage.getAzkarByCategory(categorySlug);
     }
   }
 
   async getTasbihOptions(): Promise<TasbihOption[]> {
-    return [
-      {
-        id: 'standard',
-        nameAr: 'تسبيح عام',
-        items: [
-          { id: '1', textAr: 'سبحان الله', count: 33 },
-          { id: '2', textAr: 'الحمد لله', count: 33 },
-          { id: '3', textAr: 'الله أكبر', count: 34 }
-        ]
-      }
-    ];
+    return [{
+      id: 'standard',
+      nameAr: 'تسبيح عام',
+      items: [
+        { id: '1', textAr: 'سبحان الله', count: 33 },
+        { id: '2', textAr: 'الحمد لله', count: 33 },
+        { id: '3', textAr: 'الله أكبر', count: 34 }
+      ]
+    }];
   }
 
   async isOnline(): Promise<boolean> { return true; }

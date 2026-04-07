@@ -1,5 +1,6 @@
 import React from 'react';
 import type { CategorySlug } from '@azkar/shared';
+import bismillahImg from '../assets/bismilah3.png';
 
 interface HomePageProps {
   onCategorySelect: (category: CategorySlug) => void;
@@ -29,12 +30,12 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
       {/* Welcome section */}
       <div className="text-center mb-8">
         <div className="flex justify-center mx-auto mb-4">
-  <img
-  src={new URL('bismilah3.png', import.meta.url).href.replace('/src/components', '')}
-  alt="بسم الله الرحمن الرحيم"
+          <img
+            src={bismillahImg}
+            alt="بسم الله الرحمن الرحيم"
             className="object-contain dark:brightness-0 dark:invert"
-            style={{ width: '30rem', height: '20rem' }}
-/>
+            style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
+          />
         </div>
 
         <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100 mb-2 font-arabic">
@@ -107,7 +108,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
         </h3>
         <div className="space-y-3">
           {[
-            { icon: '📱', text: 'يعمل بدون اتصال بالإنترنت' },
+            { icon: '📱', text: 'يعمل ohne اتصال بالإنترنت' },
             { icon: '🕒', text: 'عداد تلقائي لكل ذكر' },
             { icon: '🎯', text: 'تتبع التقدم اليومي' },
             { icon: '📖', text: 'نصوص أصيلة من حصن المسلم' }
