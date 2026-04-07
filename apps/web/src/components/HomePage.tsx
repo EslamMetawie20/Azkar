@@ -27,14 +27,20 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
 
   return (
     <div className="space-y-6">
-      {/* Welcome section */}
+      {/* Welcome section with high-quality image display */}
       <div className="text-center mb-8">
         <div className="flex justify-center mx-auto mb-4">
           <img
             src={bismillahImg}
             alt="بسم الله الرحمن الرحيم"
             className="object-contain dark:brightness-0 dark:invert"
-            style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '12rem' }}
+            style={{ 
+              width: '100%', 
+              maxWidth: '600px', 
+              height: 'auto',
+              imageRendering: 'auto', // Ensures smooth scaling
+              display: 'block'
+            }}
           />
         </div>
 

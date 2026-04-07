@@ -3,17 +3,27 @@ import { storage } from '../utils/storage';
 
 class ApiService {
   private async fetchLocalData(): Promise<any> {
-    // We try to fetch azkar.json from the root
-    const url = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/azkar.json`;
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to load');
-      return await response.json();
-    } catch (err) {
-      // Last resort fallback
-      const fallback = await fetch('azkar.json');
-      return await fallback.json();
+    // Cache-busting URL to ensure we don't get old data
+    const timestamp = new Date().getTime();
+    const urls = [
+      `azkar.json?v=${timestamp}`,
+      `${import.meta.env.BASE_URL}azkar.json?v=${timestamp}`.replace(/\/+/g, '/').replace(':/', '://')
+    ];
+    
+    for (const url of urls) {
+      try {
+        console.log('Trying to fetch azkar data from:', url);
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Successfully loaded JSON from:', url);
+          return data;
+        }
+      } catch (err) {
+        console.warn(`Failed to fetch from ${url}:`, err);
+      }
     }
+    throw new Error('All fetch attempts failed');
   }
 
   async getCategories(): Promise<Category[]> {
@@ -27,12 +37,12 @@ class ApiService {
     try {
       const data = await this.fetchLocalData();
       
-      // In hisn_almuslim.json, both are under this exact key:
+      // Key in JSON is exactly "أذكار الصباح والمساء"
       const combinedKey = "أذكار الصباح والمساء";
       const categoryData = data[combinedKey];
 
       if (!categoryData || !categoryData.text) {
-        console.error('Data not found for key:', combinedKey);
+        console.error('Category data missing in JSON');
         return [];
       }
 
@@ -62,10 +72,12 @@ class ApiService {
         };
       });
 
+      // Crucial: save to storage using the category slug
       await storage.saveAzkar(processedAzkar, categorySlug);
       return processedAzkar;
     } catch (error) {
-      console.error('Error in getAzkarByCategory:', error);
+      console.error('Error loading azkar:', error);
+      // Try to load from local storage if fetch fails
       return await storage.getAzkarByCategory(categorySlug);
     }
   }
