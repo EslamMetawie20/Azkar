@@ -173,7 +173,7 @@ const Settings: React.FC = () => {
         <div className="space-y-3 text-sm text-gray-600 dark:text-slate-400">
           <div className="flex justify-between">
             <span className="font-arabic">الإصدار</span>
-            <span>1.0.0</span>
+            <span>3.0.0 (Statische Version)</span>
           </div>
           <div className="flex justify-between">
             <span className="font-arabic">المصدر</span>
