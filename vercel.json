@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npm run build --workspace=@azkar/web",
+  "outputDirectory": "apps/web/dist",
+  "framework": "vite"
+}
