@@ -4,15 +4,13 @@
   "private": true,
   "description": "Arabic Adhkar & Duas App (Offline-first)",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/web",
+    "apps/mobile",
+    "packages/shared"
   ],
   "scripts": {
     "dev": "turbo run dev",
-    "dev:mock": "concurrently \"node mock-backend.js\" \"turbo run dev --filter=@azkar/web\"",
     "build": "turbo run build",
-    "dev:all": "turbo run dev",
-    "build:all": "turbo run build",
     "test:all": "turbo run test",
     "lint:all": "turbo run lint",
     "format:all": "turbo run format"
