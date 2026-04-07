@@ -34,7 +34,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
             src={bismillahImg}
             alt="بسم الله الرحمن الرحيم"
             className="object-contain dark:brightness-0 dark:invert"
-            style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
+            style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '12rem' }}
           />
         </div>
 
@@ -108,7 +108,7 @@ const HomePage: React.FC<HomePageProps> = ({ onCategorySelect, onQuranSelect }) 
         </h3>
         <div className="space-y-3">
           {[
-            { icon: '📱', text: 'يعمل ohne اتصال بالإنترنت' },
+            { icon: '📱', text: 'يعمل بدون اتصال بالإنترنت' },
             { icon: '🕒', text: 'عداد تلقائي لكل ذكر' },
             { icon: '🎯', text: 'تتبع التقدم اليومي' },
             { icon: '📖', text: 'نصوص أصيلة من حصن المسلم' }

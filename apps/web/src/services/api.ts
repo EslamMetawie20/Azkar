@@ -3,39 +3,36 @@ import { storage } from '../utils/storage';
 
 class ApiService {
   private async fetchLocalData(): Promise<any> {
-    const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-    const url = `${baseUrl}azkar.json`.replace(/\/+/g, '/').replace(':/', '://');
-    
+    // We try to fetch azkar.json from the root
+    const url = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/azkar.json`;
     try {
       const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) throw new Error('Failed to load');
       return await response.json();
     } catch (err) {
-      console.warn('Primary fetch failed, trying fallback');
-      const fallbackResponse = await fetch('azkar.json');
-      return await fallbackResponse.json();
+      // Last resort fallback
+      const fallback = await fetch('azkar.json');
+      return await fallback.json();
     }
   }
 
   async getCategories(): Promise<Category[]> {
-    const categories: Category[] = [
+    return [
       { id: 1, nameAr: "أذكار الصباح", slug: "morning", orderIndex: 1 },
       { id: 2, nameAr: "أذكار المساء", slug: "evening", orderIndex: 2 }
     ];
-    await storage.saveCategories(categories);
-    return categories;
   }
 
   async getAzkarByCategory(categorySlug: CategorySlug): Promise<Zikr[]> {
     try {
       const data = await this.fetchLocalData();
       
-      // We use the same combined key for both morning and evening
+      // In hisn_almuslim.json, both are under this exact key:
       const combinedKey = "أذكار الصباح والمساء";
       const categoryData = data[combinedKey];
 
       if (!categoryData || !categoryData.text) {
-        console.error('Data not found in JSON');
+        console.error('Data not found for key:', combinedKey);
         return [];
       }
 
@@ -57,7 +54,7 @@ class ApiService {
           .trim();
 
         return {
-          id: index + 1,
+          id: `${categorySlug}-${index + 1}`,
           textAr: cleanText,
           footnoteAr: footnotes[index] || undefined,
           repeatMin: repeatMin,
@@ -65,11 +62,10 @@ class ApiService {
         };
       });
 
-      // Save using the specific slug to ensure storage works for both
       await storage.saveAzkar(processedAzkar, categorySlug);
       return processedAzkar;
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error('Error in getAzkarByCategory:', error);
       return await storage.getAzkarByCategory(categorySlug);
     }
   }
@@ -89,18 +85,13 @@ class ApiService {
   async isOnline(): Promise<boolean> { return true; }
 
   async ensureDataAvailable(): Promise<boolean> {
-    const isDataCached = await storage.isDataAvailable();
-    if (!isDataCached) {
-      try {
-        await this.getCategories();
-        await this.getAzkarByCategory('morning');
-        await this.getAzkarByCategory('evening');
-        return true;
-      } catch (error) {
-        return false;
-      }
+    try {
+      await this.getAzkarByCategory('morning');
+      await this.getAzkarByCategory('evening');
+      return true;
+    } catch (error) {
+      return false;
     }
-    return true;
   }
 }
 
