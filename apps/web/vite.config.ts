@@ -3,16 +3,15 @@ import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  base: '/Azkar/', // Explicit absolute path for GitHub Pages
+  base: '/Azkar/', 
   resolve: {
     alias: {
       '@azkar/shared': fileURLToPath(new URL('../../packages/shared/src/index.ts', import.meta.url))
     }
   },
-  plugins: [react()],
+  plugins: [react()], // PWA Plugin removed
   build: {
     outDir: 'dist',
-    emptyOutDir: true,
-    assetsDir: 'assets'
+    emptyOutDir: true
   }
 })
