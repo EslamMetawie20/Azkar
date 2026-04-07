@@ -23,10 +23,24 @@ class ApiService {
   async getAzkarByCategory(categorySlug: CategorySlug): Promise<Zikr[]> {
     try {
       const data = await this.fetchLocalData();
-      const key = "أذكار الصباح والمساء";
-      const categoryData = data[key];
+
+      // Try specific keys first, then fallback to combined key
+      const morningKeys = ["أذكار الصباح", "اذكار الصباح"];
+      const eveningKeys = ["أذكار المساء", "اذكار المساء"];
+      const combinedKeys = ["أذكار الصباح والمساء", "اذكار الصباح والمساء"];
+
+      let categoryData = null;
+
+      if (categorySlug === 'morning') {
+        const key = morningKeys.find(k => data[k]) || combinedKeys.find(k => data[k]);
+        if (key) categoryData = data[key];
+      } else {
+        const key = eveningKeys.find(k => data[k]) || combinedKeys.find(k => data[k]);
+        if (key) categoryData = data[key];
+      }
 
       if (!categoryData || !categoryData.text) {
+        console.warn(`No data found for category: ${categorySlug}`);
         return [];
       }
 
