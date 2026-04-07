@@ -3,25 +3,32 @@ import { storage } from '../utils/storage';
 
 class ApiService {
   private async fetchLocalData(): Promise<any> {
-    const url = `${import.meta.env.BASE_URL}azkar.json`;
+    // Robust URL construction
+    const baseUrl = import.meta.env.BASE_URL.endsWith('/') 
+      ? import.meta.env.BASE_URL 
+      : `${import.meta.env.BASE_URL}/`;
+    const url = `${baseUrl}azkar.json`.replace(/\/+/g, '/').replace(':/', '://');
+    
     console.log('Fetching azkar data from:', url);
+    
     try {
       const response = await fetch(url);
       if (!response.ok) {
-        console.error('Fetch failed with status:', response.status);
-        throw new Error(`Failed to load local azkar.json: ${response.status}`);
+        throw new Error(`Failed to load: ${response.status}`);
       }
-      const data = await response.json();
-      console.log('Successfully loaded azkar.json. Keys:', Object.keys(data));
-      return data;
+      return await response.json();
     } catch (err) {
-      console.error('Error fetching local data:', err);
+      // Fallback for different environments
+      if (url.includes('/Azkar/')) {
+        console.log('Trying fallback to root azkar.json');
+        const fallbackRes = await fetch('azkar.json');
+        return await fallbackRes.json();
+      }
       throw err;
     }
   }
 
   async getCategories(): Promise<Category[]> {
-    // These are static for our app
     const categories: Category[] = [
       { id: 1, nameAr: "أذكار الصباح", slug: "morning", orderIndex: 1 },
       { id: 2, nameAr: "أذكار المساء", slug: "evening", orderIndex: 2 }
@@ -33,24 +40,15 @@ class ApiService {
   async getAzkarByCategory(categorySlug: CategorySlug): Promise<Zikr[]> {
     try {
       const data = await this.fetchLocalData();
-
-      // Try specific keys first, then fallback to combined key
-      const morningKeys = ["أذكار الصباح", "اذكار الصباح"];
-      const eveningKeys = ["أذكار المساء", "اذكار المساء"];
-      const combinedKeys = ["أذكار الصباح والمساء", "اذكار الصباح والمساء"];
-
-      let categoryData = null;
-
-      if (categorySlug === 'morning') {
-        const key = morningKeys.find(k => data[k]) || combinedKeys.find(k => data[k]);
-        if (key) categoryData = data[key];
-      } else {
-        const key = eveningKeys.find(k => data[k]) || combinedKeys.find(k => data[k]);
-        if (key) categoryData = data[key];
-      }
+      
+      // The keys in your JSON are exactly these:
+      const morningKey = "أذكار الصباح والمساء"; 
+      const eveningKey = "أذكار الصباح والمساء";
+      
+      const categoryData = categorySlug === 'morning' ? data[morningKey] : data[eveningKey];
 
       if (!categoryData || !categoryData.text) {
-        console.warn(`No data found for category: ${categorySlug}`);
+        console.error(`Key not found in JSON for ${categorySlug}`);
         return [];
       }
 
@@ -89,7 +87,6 @@ class ApiService {
   }
 
   async getTasbihOptions(): Promise<TasbihOption[]> {
-    // Static tasbih options
     return [
       {
         id: 'standard',
@@ -103,9 +100,7 @@ class ApiService {
     ];
   }
 
-  async isOnline(): Promise<boolean> {
-    return true; // Always true for static local data
-  }
+  async isOnline(): Promise<boolean> { return true; }
 
   async ensureDataAvailable(): Promise<boolean> {
     const isDataCached = await storage.isDataAvailable();
@@ -116,7 +111,6 @@ class ApiService {
         await this.getAzkarByCategory('evening');
         return true;
       } catch (error) {
-        console.error('Failed to fetch initial data:', error);
         return false;
       }
     }
