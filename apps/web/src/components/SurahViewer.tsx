@@ -87,7 +87,7 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-24 relative">
       
       {/* Super Slim Auto-Scroll Controller (Fixed Left) */}
-      <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-40 hidden md:flex flex-col items-center space-y-4 p-2.5 bg-white/20 dark:bg-slate-900/30 backdrop-blur-xl rounded-full border border-spiritual-dark/10 shadow-xl transition-all hover:opacity-100 opacity-40 hover:bg-white/40">
+      <div className="fixed left-2 md:left-4 top-1/2 transform -translate-y-1/2 z-40 flex flex-col items-center space-y-4 p-2 md:p-2.5 bg-white/20 dark:bg-slate-900/30 backdrop-blur-xl rounded-full border border-spiritual-dark/10 shadow-xl transition-all hover:opacity-100 opacity-30 hover:bg-white/40">
         <div className="relative h-48 w-6 flex flex-col items-center">
           <div className="text-[8px] text-spiritual-dark/40 mb-1">▼</div>
           
