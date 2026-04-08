@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { SurahWithAyahs } from '@azkar/shared';
 import { quranApi } from '@azkar/shared';
 import { useFontSize } from '../contexts/FontContext';
+import bismillahImg from '../assets/bismilah3.png';
 
 interface SurahViewerProps {
   surahNumber: number;
@@ -12,10 +13,35 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
   const { fontSize } = useFontSize();
   const [surah, setSurah] = useState<SurahWithAyahs | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Auto-scroll state
+  const [scrollSpeed, setScrollSpeed] = useState(0); // 0 = stop, 1-10 = speeds
+  const scrollIntervalRef = useRef<any>(null);
 
   useEffect(() => {
     loadSurah();
+    return () => stopScroll(); // Cleanup on unmount
   }, [surahNumber]);
+
+  useEffect(() => {
+    stopScroll();
+    if (scrollSpeed > 0) {
+      scrollIntervalRef.current = setInterval(() => {
+        window.scrollBy({
+          top: scrollSpeed * 0.5,
+          behavior: 'auto'
+        });
+      }, 30);
+    }
+    return () => stopScroll();
+  }, [scrollSpeed]);
+
+  const stopScroll = () => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+      scrollIntervalRef.current = null;
+    }
+  };
 
   const loadSurah = async () => {
     try {
@@ -40,8 +66,61 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
 
   if (!surah) return null;
 
+  const getCleanAyahText = (ayah: any, surahNum: number) => {
+    let text = ayah.text;
+    if (ayah.numberInSurah === 1 && surahNum !== 1 && surahNum !== 9) {
+      text = text.replace(/^بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ\s*/, '');
+      text = text.replace(/^بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\s*/, '');
+      text = text.replace(/^بسم الله الرحمن الرحيم\s*/, '');
+      
+      if (text.includes('الرَّحِيمِ') || text.includes('ٱلرَّحِيمِ')) {
+        const idx = Math.max(text.indexOf('الرَّحِيمِ'), text.indexOf('ٱلرَّحِيمِ'));
+        if (idx >= 0 && idx < 45) {
+          text = text.slice(idx + 10).trim();
+        }
+      }
+    }
+    return text;
+  };
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-24">
+    <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-24 relative">
+      
+      {/* Super Slim Auto-Scroll Controller (Fixed Left) */}
+      <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-40 hidden md:flex flex-col items-center space-y-4 p-2.5 bg-white/20 dark:bg-slate-900/30 backdrop-blur-xl rounded-full border border-spiritual-dark/10 shadow-xl transition-all hover:opacity-100 opacity-40 hover:bg-white/40">
+        <div className="relative h-48 w-6 flex flex-col items-center">
+          <div className="text-[8px] text-spiritual-dark/40 mb-1">▼</div>
+          
+          <input
+            type="range"
+            min="0"
+            max="10"
+            step="1"
+            value={scrollSpeed}
+            onChange={(e) => setScrollSpeed(parseInt(e.target.value))}
+            className="vertical-range accent-spiritual-dark cursor-pointer flex-1"
+            style={{ 
+              WebkitAppearance: 'slider-vertical', 
+              width: '3px'
+            } as any}
+          />
+          
+          <div className="text-[8px] text-spiritual-dark/40 mt-1">▲</div>
+        </div>
+        
+        {/* Slim Elegant Stop Button */}
+        <button 
+          onClick={() => setScrollSpeed(0)}
+          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${scrollSpeed === 0 ? 'bg-transparent text-spiritual-dark opacity-20' : 'bg-spiritual-dark text-white shadow-md active:scale-90'}`}
+          title="توقف"
+        >
+          <div className="flex space-x-0.5 space-x-reverse">
+            <div className="w-1 h-3 bg-current rounded-full"></div>
+            <div className="w-1 h-3 bg-current rounded-full"></div>
+          </div>
+        </button>
+      </div>
+
       {/* Header Navigation */}
       <button
         onClick={onBack}
@@ -69,12 +148,15 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
             </div>
           </div>
 
-          {/* Bismillah */}
+          {/* Original Bismillah Image */}
           {surah.number !== 9 && (
-            <div className="text-center mb-12">
-              <p className="quran-text text-4xl md:text-5xl text-spiritual-dark dark:text-slate-100 leading-normal opacity-95">
-                بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
-              </p>
+            <div className="flex justify-center mb-12 animate-fade-in">
+              <img
+                src={bismillahImg}
+                alt="بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ"
+                className="object-contain dark:brightness-0 dark:invert opacity-90 transition-all hover:opacity-100"
+                style={{ width: 'auto', maxWidth: '400px', height: 'auto', maxHeight: '10rem' }}
+              />
             </div>
           )}
 
@@ -91,9 +173,7 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
             {surah.ayahs.map((ayah: any) => (
               <React.Fragment key={ayah.number}>
                 <span className="inline text-slate-800 dark:text-slate-100 transition-colors hover:text-spiritual-dark">
-                  {ayah.numberInSurah === 1 && surah.number !== 1 && surah.number !== 9
-                    ? ayah.text.replace('بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ', '').trim()
-                    : ayah.text}
+                  {getCleanAyahText(ayah, surah.number)}
                 </span>
                 
                 {/* Traditional Ayah Marker */}
