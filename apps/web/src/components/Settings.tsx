@@ -172,10 +172,6 @@ const Settings: React.FC = () => {
         <h3 className="text-lg font-bold text-gray-800 dark:text-slate-100 mb-4 font-arabic">معلومات التطبيق</h3>
         <div className="space-y-3 text-sm text-gray-600 dark:text-slate-400">
           <div className="flex justify-between">
-            <span className="font-arabic">الإصدار</span>
-            <span>1.0.3</span>
-          </div>
-          <div className="flex justify-between">
             <span className="font-arabic">المصدر</span>
             <span className="font-arabic">حصن المسلم</span>
           </div>
