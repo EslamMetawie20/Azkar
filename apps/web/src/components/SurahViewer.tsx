@@ -138,7 +138,7 @@ const SurahViewer: React.FC<SurahViewerProps> = ({ surahNumber, onBack }) => {
           
           {/* Surah Title Section */}
           <div className="text-center mb-12 space-y-4 border-b border-spiritual-dark/5 pb-8">
-            <h1 className="text-5xl md:text-6xl font-bold text-spiritual-dark dark:text-spiritual-accent font-arabic">
+            <h1 className="text-5xl md:text-6xl font-bold text-spiritual-dark dark:text-spiritual-accent mb-6" style={{ fontFamily: "'Amiri', serif" }}>
               {surah.name}
             </h1>
             <div className="flex justify-center items-center space-x-4 space-x-reverse text-slate-400 font-arabic italic text-xs tracking-widest">

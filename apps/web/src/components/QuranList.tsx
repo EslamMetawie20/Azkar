@@ -85,7 +85,7 @@ const QuranList: React.FC<QuranListProps> = ({ onSurahSelect }) => {
               </div>
               
               <div className="flex-1">
-                <h3 className="text-xl font-bold text-spiritual-dark dark:text-spiritual-accent font-arabic mb-1 group-hover:translate-x-[-2px] transition-transform">
+                <h3 className="text-2xl font-bold text-spiritual-dark dark:text-spiritual-accent mb-1 group-hover:translate-x-[-2px] transition-transform" style={{ fontFamily: "'Amiri', serif" }}>
                   {surah.name}
                 </h3>
                 <p className="text-xs text-slate-400 dark:text-slate-500 font-arabic italic">
