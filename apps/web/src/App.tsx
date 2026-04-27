@@ -8,6 +8,7 @@ import SurahViewer from './components/SurahViewer';
 import { apiService } from './services/api';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { FontProvider } from './contexts/FontContext';
+import StatsCard from './components/StatsCard';
 
 type Page = 'home' | 'azkar' | 'settings' | 'quran' | 'surah';
 
@@ -94,6 +95,7 @@ function AppContent() {
           </div>
 
           <div className="flex items-center space-x-3 space-x-reverse">
+            <StatsCard hideLabel />
             <button
               onClick={toggleTheme}
               className="p-3 bg-spiritual-dark/5 text-spiritual-dark dark:text-spiritual-accent rounded-2xl hover:bg-spiritual-dark/10 transition-all border border-spiritual-dark/10"

@@ -3,6 +3,8 @@ import type { Zikr, CategorySlug } from '@azkar/shared';
 import { apiService } from '../services/api';
 import { storage } from '../utils/storage';
 import { useFontSize } from '../contexts/FontContext';
+import { vibrate, shareContent } from '../utils/browser';
+import { incrementStats } from '../utils/stats';
 
 interface AzkarListProps {
   category: CategorySlug;
@@ -13,6 +15,7 @@ const AzkarList: React.FC<AzkarListProps> = ({ category }) => {
   const [azkar, setAzkar] = useState<Zikr[]>([]);
   const [counts, setCounts] = useState<{ [key: number]: number }>({});
   const [loading, setLoading] = useState(true);
+  const [shareMessage, setShareMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const loadAzkar = async () => {
@@ -34,20 +37,36 @@ const AzkarList: React.FC<AzkarListProps> = ({ category }) => {
   const handleIncrement = async (zikrId: number, targetCount: number) => {
     const currentCount = counts[zikrId] || 0;
     if (currentCount < targetCount) {
+      vibrate(30);
       const newCount = currentCount + 1;
       setCounts({ ...counts, [zikrId]: newCount });
       await storage.saveProgress(zikrId, newCount, targetCount);
       
-      // Haptic feedback simulation or sound could go here
-      if (newCount === targetCount && window.navigator.vibrate) {
-        window.navigator.vibrate(100);
+      incrementStats(1);
+
+      if (newCount === targetCount) {
+        vibrate([50, 100, 50]);
       }
     }
   };
 
   const handleReset = async (zikrId: number) => {
+    vibrate(20);
     setCounts({ ...counts, [zikrId]: 0 });
     await storage.saveProgress(zikrId, 0, 0);
+  };
+
+  const handleShare = async (text: string) => {
+    vibrate(20);
+    try {
+      const result = await shareContent('Zikr', text);
+      if (result === 'copied') {
+        setShareMessage('تم النسخ إلى الحافظة');
+        setTimeout(() => setShareMessage(null), 2000);
+      }
+    } catch (err) {
+      // User cancelled or failed
+    }
   };
 
   if (loading) {
@@ -64,6 +83,13 @@ const AzkarList: React.FC<AzkarListProps> = ({ category }) => {
 
   return (
     <div className="space-y-8 pb-20">
+      {/* Toast Message */}
+      {shareMessage && (
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 bg-emerald-600 text-white px-6 py-2 rounded-full shadow-lg font-arabic animate-fade-in-down">
+          {shareMessage}
+        </div>
+      )}
+
       {/* Progress Sticky Header */}
       <div className="sticky top-0 z-20 bg-spiritual-light/95 dark:bg-slate-950/95 backdrop-blur py-4 -mx-4 px-4 border-b border-spiritual-gold/10">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -115,15 +141,27 @@ const AzkarList: React.FC<AzkarListProps> = ({ category }) => {
 
                 {/* Interaction Area */}
                 <div className="flex items-center justify-between pt-4">
-                  <button
-                    onClick={() => handleReset(zikr.id)}
-                    className="p-2 text-slate-300 hover:text-red-400 transition-colors"
-                    title="إعادة تعيين"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                  </button>
+                  <div className="flex items-center space-x-2 space-x-reverse">
+                    <button
+                      onClick={() => handleReset(zikr.id)}
+                      className="p-2 text-slate-300 hover:text-red-400 transition-colors"
+                      title="إعادة تعيين"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </button>
+                    
+                    <button
+                      onClick={() => handleShare(zikr.textAr)}
+                      className="p-2 text-slate-300 hover:text-emerald-500 transition-colors"
+                      title="مشاركة"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                    </button>
+                  </div>
 
                   <button
                     onClick={() => handleIncrement(zikr.id, zikr.repeatMin)}
@@ -138,10 +176,9 @@ const AzkarList: React.FC<AzkarListProps> = ({ category }) => {
                       <span className="text-2xl font-arabic">{zikr.repeatMin - count}</span>
                       <span className="text-sm font-arabic opacity-80">متبقي</span>
                     </div>
-                    {/* Ripple Effect Background could go here */}
                   </button>
 
-                  <div className="w-10">
+                  <div className="w-10 flex justify-end">
                     {isCompleted && (
                       <div className="text-emerald-500 animate-bounce-short">
                         <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">

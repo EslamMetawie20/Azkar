@@ -58,8 +58,7 @@ const darkColors: ThemeColors = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const deviceColorScheme = useColorScheme();
-  const [theme, setTheme] = useState<Theme>(deviceColorScheme || 'light');
+  const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
     loadTheme();
@@ -70,6 +69,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const savedTheme = await AsyncStorage.getItem('azkar-theme');
       if (savedTheme === 'light' || savedTheme === 'dark') {
         setTheme(savedTheme);
+      } else {
+        setTheme('dark');
       }
     } catch (error) {
       console.error('Error loading theme:', error);

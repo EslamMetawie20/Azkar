@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { TasbihOption } from '@azkar/shared';
 import { apiService } from '../services/api';
+import { vibrate } from '../utils/browser';
+import { incrementStats } from '../utils/stats';
 
 const TasbihCounter: React.FC = () => {
   const [tasbihOptions, setTasbihOptions] = useState<TasbihOption[]>([]);
@@ -27,6 +29,7 @@ const TasbihCounter: React.FC = () => {
   }, []);
 
   const handleOptionSelect = (option: TasbihOption) => {
+    vibrate(20);
     setSelectedOption(option);
     setCurrentItemIndex(0);
     setCurrentCount(0);
@@ -36,6 +39,7 @@ const TasbihCounter: React.FC = () => {
   const handleIncrement = () => {
     if (!selectedOption || isCompleted) return;
 
+    vibrate(30);
     const currentItem = selectedOption.items[currentItemIndex];
     const newCount = currentCount + 1;
 
@@ -44,16 +48,22 @@ const TasbihCounter: React.FC = () => {
       if (currentItemIndex < selectedOption.items.length - 1) {
         setCurrentItemIndex(currentItemIndex + 1);
         setCurrentCount(0);
+        vibrate([30, 100, 30]); // Distinct vibration for sub-item completion
       } else {
         // All items completed
         setIsCompleted(true);
+        vibrate([50, 100, 50, 100, 50]); // Distinct vibration for full completion
       }
     } else {
       setCurrentCount(newCount);
     }
+    
+    // Increment overall statistics
+    incrementStats(1);
   };
 
   const handleReset = () => {
+    vibrate(20);
     setCurrentItemIndex(0);
     setCurrentCount(0);
     setIsCompleted(false);

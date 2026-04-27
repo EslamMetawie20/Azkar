@@ -4,6 +4,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useFontSize } from '../contexts/FontContext';
 import Switch from '@mui/material/Switch';
 import { styled } from '@mui/material/styles';
+import StatsCard from './StatsCard';
 
 const ThemeSwitch = styled(Switch)(({ theme }) => ({
   width: 44,
@@ -94,6 +95,18 @@ const Settings: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Statistics Section */}
+      <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl p-6 shadow-lg">
+        <h3 className="text-lg font-bold text-gray-800 dark:text-slate-100 mb-4 font-arabic">الإحصائيات</h3>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-gray-700 dark:text-slate-300 font-arabic">إحصائيات الأذكار</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 font-arabic">اطلع على تقدمك اليومي والأسبوعي</p>
+          </div>
+          <StatsCard />
+        </div>
+      </div>
+
       {/* Font size settings */}
       <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl p-6 shadow-lg">
         <h3 className="text-lg font-bold text-gray-800 dark:text-slate-100 mb-4 font-arabic">حجم الخط</h3>

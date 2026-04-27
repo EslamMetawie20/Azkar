@@ -1,6 +1,7 @@
 import React from 'react';
 import type { CategorySlug } from '@azkar/shared';
 import bismillahImg from '../assets/bismilah3.png';
+import StatsCard from './StatsCard';
 
 interface HomePageProps {
   onCategorySelect: (category: CategorySlug) => void;
